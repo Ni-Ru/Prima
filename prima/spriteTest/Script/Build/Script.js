@@ -56,7 +56,7 @@ var Script;
         spriteNode.setAnimation(animation);
         spriteNode.setFrameDirection(1);
         spriteNode.mtxLocal.translateY(-1);
-        spriteNode.framerate = 8;
+        spriteNode.framerate = 10;
         root.addChild(spriteNode);
         // camera setup
         let cmpCamera = new ƒ.ComponentCamera();
@@ -69,7 +69,7 @@ var Script;
         viewport.camera.clrBackground = ƒ.Color.CSS("White");
         viewport.draw();
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, hndLoop);
-        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 100);
+        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
         //document.forms[0].addEventListener("change", handleChange);
     }
     function hndLoop(_event) {

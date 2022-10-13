@@ -25,7 +25,7 @@ namespace Script {
     spriteNode.setAnimation(animation);
     spriteNode.setFrameDirection(1);
     spriteNode.mtxLocal.translateY(-1);
-    spriteNode.framerate = 8;
+    spriteNode.framerate = 10;
 
 
     root.addChild(spriteNode);
@@ -44,7 +44,7 @@ namespace Script {
     viewport.draw();
 
   ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, hndLoop);
-    ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 100);
+    ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
 
     //document.forms[0].addEventListener("change", handleChange);
   }
