@@ -47,20 +47,20 @@ var Script;
     async function hndLoad(_event) {
         let root = new ƒ.Node("root");
         let imgSpriteSheet = new ƒ.TextureImage();
-        await imgSpriteSheet.load("./images/luigi_walk.jpg");
+        await imgSpriteSheet.load("./images/walkAnimation.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         let animation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 18, 34), 10, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(18));
+        animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 21, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(21));
         spriteNode = new ƒAid.NodeSprite("Sprite");
         spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
         spriteNode.setAnimation(animation);
         spriteNode.setFrameDirection(1);
         spriteNode.mtxLocal.translateY(-1);
-        spriteNode.framerate = 10;
+        spriteNode.framerate = 12;
         root.addChild(spriteNode);
         // camera setup
         let cmpCamera = new ƒ.ComponentCamera();
-        cmpCamera.mtxPivot.translateZ(5);
+        cmpCamera.mtxPivot.translateZ(4);
         cmpCamera.mtxPivot.rotateY(180);
         // setup viewport
         const canvas = document.querySelector("canvas");
@@ -69,7 +69,7 @@ var Script;
         viewport.camera.clrBackground = ƒ.Color.CSS("White");
         viewport.draw();
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, hndLoop);
-        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
+        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 200);
         //document.forms[0].addEventListener("change", handleChange);
     }
     function hndLoop(_event) {
