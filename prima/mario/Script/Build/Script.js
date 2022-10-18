@@ -45,7 +45,7 @@ var Script;
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
     let marioPosNode;
-    let marioNode;
+    //let marioNode: ƒ.Node;
     function start(_event) {
         viewport = _event.detail;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
@@ -55,7 +55,7 @@ var Script;
         let branch = viewport.getBranch();
         console.log(branch);
         marioPosNode = branch.getChildrenByName("Mario position")[0];
-        marioNode = marioPosNode.getChildrenByName("Mario")[0];
+        //marioNode= marioPosNode.getChildrenByName("Mario")[0];
     }
     async function hndLoad() {
         //let root: ƒ.Node = new ƒ.Node("root");

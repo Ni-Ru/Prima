@@ -8,7 +8,7 @@ namespace Script {
   let viewport: ƒ.Viewport;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
   let marioPosNode: ƒ.Node;
-  let marioNode: ƒ.Node;
+  //let marioNode: ƒ.Node;
 
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
@@ -21,7 +21,7 @@ namespace Script {
     let branch: ƒ.Node = viewport.getBranch();
     console.log(branch);
     marioPosNode= branch.getChildrenByName("Mario position")[0];
-    marioNode= marioPosNode.getChildrenByName("Mario")[0];
+    //marioNode= marioPosNode.getChildrenByName("Mario")[0];
 
   }
 
