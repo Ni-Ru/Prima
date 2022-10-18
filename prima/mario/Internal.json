@@ -4386,9 +4386,9 @@
                         "ƒ.ComponentMesh": {
                           "idMesh": "MeshQuad|2022-10-11T14:11:45.368Z|23081",
                           "pivot": {
-                            "translation": "[0, 0, 0]",
+                            "translation": "[0, 0.10000000149011612, 0]",
                             "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1.5999999046325684, 1]"
+                            "scaling": "[1.2000000476837158, 1.7999999523162842, 1]"
                           },
                           "Component": {
                             "active": true
