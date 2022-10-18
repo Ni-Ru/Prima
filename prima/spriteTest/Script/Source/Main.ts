@@ -4,8 +4,6 @@ namespace Script {
 
   window.addEventListener("load", hndLoad);
 
-  const clrWhite: ƒ.Color = ƒ.Color.CSS("white");
-
   let viewport: ƒ.Viewport;
   
   let spriteNode: ƒAid.NodeSprite;
