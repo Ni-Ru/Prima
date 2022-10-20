@@ -12,11 +12,11 @@ namespace Script {
     let root: ƒ.Node = new ƒ.Node("root");
 
     let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
-    await imgSpriteSheet.load("./images/walkAnimation.png");
+    await imgSpriteSheet.load("./images/FrogSprite.png");
     let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
     let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-    animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 21, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(21));
+    animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 28, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(28));
 
     spriteNode = new ƒAid.NodeSprite("Sprite");
     spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));

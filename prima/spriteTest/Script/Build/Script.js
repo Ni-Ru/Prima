@@ -41,16 +41,15 @@ var Script;
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     window.addEventListener("load", hndLoad);
-    const clrWhite = ƒ.Color.CSS("white");
     let viewport;
     let spriteNode;
     async function hndLoad(_event) {
         let root = new ƒ.Node("root");
         let imgSpriteSheet = new ƒ.TextureImage();
-        await imgSpriteSheet.load("./images/walkAnimation.png");
+        await imgSpriteSheet.load("./images/FrogSprite.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         let animation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 21, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(21));
+        animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 28, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(28));
         spriteNode = new ƒAid.NodeSprite("Sprite");
         spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
         spriteNode.setAnimation(animation);
