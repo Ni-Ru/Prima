@@ -103,13 +103,12 @@ namespace Script {
       spriteNode.showFrame(3);
     }
 
-     
-    }
-
     if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT])){
       marioSpeed=sprintSpeed;
     }
     else{
       marioSpeed=walkSpeed;
     }
+     
+  }
   }

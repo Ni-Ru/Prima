@@ -124,12 +124,12 @@ var Script;
             }
             spriteNode.showFrame(3);
         }
-    }
-    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT])) {
-        marioSpeed = sprintSpeed;
-    }
-    else {
-        marioSpeed = walkSpeed;
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT])) {
+            marioSpeed = sprintSpeed;
+        }
+        else {
+            marioSpeed = walkSpeed;
+        }
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
