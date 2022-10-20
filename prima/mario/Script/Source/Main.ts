@@ -10,6 +10,7 @@ namespace Script {
   let marioPosNode: ƒ.Node;
   let duck: ƒAid.SpriteSheetAnimation;
   let walk: ƒAid.SpriteSheetAnimation;
+  let currentAnimation: ƒAid.SpriteSheetAnimation;
   //let marioNode: ƒ.Node;
 
   function start(_event: CustomEvent): void {
@@ -44,10 +45,10 @@ namespace Script {
     walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 21, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(21));
 
     //todo set more animations
-
+    currentAnimation=walk;
     spriteNode = new ƒAid.NodeSprite("Sprite");
     spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
-    spriteNode.setAnimation(walk);
+    spriteNode.setAnimation(currentAnimation);
     spriteNode.setFrameDirection(1);
     spriteNode.mtxLocal.translateY(-1);
     spriteNode.framerate = 12;
@@ -73,31 +74,37 @@ namespace Script {
 
     viewport.draw();
     ƒ.AudioManager.default.update();
-    if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D])){
+    if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D]) && currentAnimation != duck){
       marioPosTransform.mtxLocal.translateX(marioSpeed*ƒ.Loop.timeFrameGame/1000);
       if(directionRight==false){
         spriteTransform.mtxLocal.rotateY(180);
         directionRight = true;
       }
     }
-    else if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A])){
+    else if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A]) && currentAnimation != duck){
       marioPosTransform.mtxLocal.translateX(-(marioSpeed*ƒ.Loop.timeFrameGame/1000));
       if(directionRight==true){
         spriteTransform.mtxLocal.rotateY(180);
         directionRight = false;
       }
-    }else{
+    }else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])){
+      spriteNode.setAnimation(duck);
+      currentAnimation = duck;
+      spriteNode.setFrameDirection(0);
+      spriteNode.framerate = 0;
+    }else if(!ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])){
+      if(currentAnimation != walk){
+        spriteNode.setAnimation(walk);
+        spriteNode.setFrameDirection(1);
+        spriteNode.framerate = 12;
+        currentAnimation = walk;
+        
+      }
       spriteNode.showFrame(3);
     }
 
-
-    // if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])){
-    //   spriteNode.setAnimation(duck);
-    //   console.log(duck)
-    // }else{
-    //   console.log(walk)
-    //   spriteNode.setAnimation(walk);
-    // }
+     
+    }
 
     if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT])){
       marioSpeed=sprintSpeed;
@@ -106,4 +113,3 @@ namespace Script {
       marioSpeed=walkSpeed;
     }
   }
-}
