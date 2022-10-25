@@ -40,14 +40,29 @@ var Script;
 (function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
-    ƒ.Debug.info("Main Program Template running!");
-    let spriteNode;
-    let viewport;
-    document.addEventListener("interactiveViewportStarted", start);
-    let marioPosNode;
+    const gravity = -2;
+    const sprintSpeed = 10;
+    const walkSpeed = 5;
+    const jumpForce = 0.4;
+    //Variables
+    let marioSpeed;
+    let directionRight;
+    let onGround;
+    let justJumped;
+    // Animation variables
     let duck;
     let walk;
+    let jump;
     let currentAnimation;
+    // Nodes Transformations
+    let spriteNode;
+    let marioPosNode;
+    let marioPosTransform;
+    let spriteTransform;
+    let pos;
+    ƒ.Debug.info("Main Program Template running!");
+    let viewport;
+    document.addEventListener("interactiveViewportStarted", start);
     //let marioNode: ƒ.Node;
     function start(_event) {
         viewport = _event.detail;
@@ -58,18 +73,24 @@ var Script;
         let branch = viewport.getBranch();
         console.log(branch);
         marioPosNode = branch.getChildrenByName("Mario position")[0];
+        marioPosNode.mtxLocal.translation.y;
         //marioNode= marioPosNode.getChildrenByName("Mario")[0];
     }
     async function hndLoad() {
         //let root: ƒ.Node = new ƒ.Node("root");
         let imgSpriteSheet = new ƒ.TextureImage();
         let imgSpriteSheetDuck = new ƒ.TextureImage();
+        let imgSpriteSheetJump = new ƒ.TextureImage();
         await imgSpriteSheet.load("./images/walkAnimation.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         await imgSpriteSheetDuck.load("./images/duckingMario.png");
         let duckingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetDuck);
+        await imgSpriteSheetJump.load("./images/jumpingMario.png");
+        let jumpingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetJump);
         duck = new ƒAid.SpriteSheetAnimation("Duck", duckingCoat);
         duck.generateByGrid(ƒ.Rectangle.GET(0, 0, 27, 34), 1, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(27));
+        jump = new ƒAid.SpriteSheetAnimation("Duck", jumpingCoat);
+        jump.generateByGrid(ƒ.Rectangle.GET(0, 0, 27, 34), 1, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(27));
         walk = new ƒAid.SpriteSheetAnimation("Walk", coat);
         walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 21, 34), 4, 15, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(21));
         //todo set more animations
@@ -85,14 +106,46 @@ var Script;
         spriteNode.showFrame(3);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 200);
     }
-    let marioSpeed = 0;
-    let sprintSpeed = 10;
-    let walkSpeed = 5;
-    let directionRight = true;
+    marioSpeed = 0;
+    directionRight = true;
+    onGround = true;
+    justJumped = false;
+    let velocityY = 0;
     function update(_event) {
         // ƒ.Physics.simulate();  // if physics is included and used
-        let marioPosTransform = marioPosNode.getComponent(ƒ.ComponentTransform);
-        let spriteTransform = spriteNode.getComponent(ƒ.ComponentTransform);
+        marioPosTransform = marioPosNode.getComponent(ƒ.ComponentTransform);
+        spriteTransform = spriteNode.getComponent(ƒ.ComponentTransform);
+        pos = marioPosTransform.mtxLocal.translation;
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && !justJumped) {
+            if (onGround) {
+                velocityY = jumpForce;
+                onGround = false;
+                spriteNode.setAnimation(jump);
+                currentAnimation = jump;
+                justJumped = true;
+            }
+        }
+        else if (!ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE])) {
+            justJumped = false;
+        }
+        let deltaTime = ƒ.Loop.timeFrameGame / 1000;
+        velocityY = velocityY + gravity * deltaTime;
+        marioPosTransform.mtxLocal.translateY(velocityY * deltaTime);
+        if (pos.y + velocityY > 0.3) {
+            marioPosTransform.mtxLocal.translateY(velocityY);
+            spriteNode.setAnimation(jump);
+            currentAnimation = jump;
+        }
+        else {
+            onGround = true;
+            velocityY = 0;
+            pos.y = 0.3;
+            marioPosTransform.mtxLocal.translation = pos;
+            if (currentAnimation != walk && currentAnimation != duck) {
+                spriteNode.setAnimation(walk);
+                currentAnimation = walk;
+            }
+        }
         viewport.draw();
         ƒ.AudioManager.default.update();
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D]) && currentAnimation != duck) {
@@ -112,10 +165,8 @@ var Script;
         else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])) {
             spriteNode.setAnimation(duck);
             currentAnimation = duck;
-            spriteNode.setFrameDirection(0);
-            spriteNode.framerate = 0;
         }
-        else if (!ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])) {
+        else {
             if (currentAnimation != walk) {
                 spriteNode.setAnimation(walk);
                 spriteNode.setFrameDirection(1);
