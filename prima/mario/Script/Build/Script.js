@@ -40,10 +40,10 @@ var Script;
 (function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
-    const gravity = -2;
+    const gravity = -8;
     const sprintSpeed = 10;
     const walkSpeed = 5;
-    const jumpForce = 0.4;
+    const jumpForce = 5;
     //Variables
     let marioSpeed;
     let directionRight;
@@ -56,6 +56,10 @@ var Script;
     let currentAnimation;
     // Nodes Transformations
     let spriteNode;
+    let floorListNode;
+    let floorGroups;
+    let floorGroupsize;
+    let floorPositions = [];
     let marioPosNode;
     let marioPosTransform;
     let spriteTransform;
@@ -68,11 +72,26 @@ var Script;
         viewport = _event.detail;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
         //ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
-        console.log(viewport);
         hndLoad();
         let branch = viewport.getBranch();
+        let audioBeep;
         console.log(branch);
+        audioBeep = new ƒ.Audio("audio/SuperMarioBros.mp3");
+        let cmpAudio = new ƒ.ComponentAudio(audioBeep, false, false);
+        cmpAudio.connect(true);
+        cmpAudio.volume = 1;
+        cmpAudio.play(true);
+        branch.addComponent(cmpAudio);
         marioPosNode = branch.getChildrenByName("Mario position")[0];
+        floorListNode = branch.getChildrenByName("All Floors")[0];
+        floorGroups = floorListNode.getChildrenByName("Floors");
+        for (let GroupCounter = 0; GroupCounter < floorGroups.length; GroupCounter++) {
+            floorGroupsize = floorGroups[GroupCounter].getChildrenByName("Floor Position");
+            for (let inGroupCounter = 0; inGroupCounter < floorGroupsize.length; inGroupCounter++) {
+                floorPositions.push(floorGroupsize[inGroupCounter]);
+            }
+        }
+        console.log(floorPositions);
         marioPosNode.mtxLocal.translation.y;
         //marioNode= marioPosNode.getChildrenByName("Mario")[0];
     }
@@ -116,23 +135,22 @@ var Script;
         marioPosTransform = marioPosNode.getComponent(ƒ.ComponentTransform);
         spriteTransform = spriteNode.getComponent(ƒ.ComponentTransform);
         pos = marioPosTransform.mtxLocal.translation;
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && !justJumped) {
-            if (onGround) {
-                velocityY = jumpForce;
-                onGround = false;
-                spriteNode.setAnimation(jump);
-                currentAnimation = jump;
-                justJumped = true;
-            }
+        let deltaTime = ƒ.Loop.timeFrameGame / 1000;
+        velocityY += gravity * deltaTime;
+        let yOffset = velocityY * deltaTime;
+        marioPosTransform.mtxLocal.translateY(yOffset);
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && !justJumped && onGround) {
+            velocityY = jumpForce;
+            onGround = false;
+            spriteNode.setAnimation(jump);
+            currentAnimation = jump;
+            justJumped = true;
         }
         else if (!ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE])) {
             justJumped = false;
         }
-        let deltaTime = ƒ.Loop.timeFrameGame / 1000;
-        velocityY = velocityY + gravity * deltaTime;
-        marioPosTransform.mtxLocal.translateY(velocityY * deltaTime);
+        console.log(pos.y + velocityY);
         if (pos.y + velocityY > 0.3) {
-            marioPosTransform.mtxLocal.translateY(velocityY);
             spriteNode.setAnimation(jump);
             currentAnimation = jump;
         }
@@ -166,13 +184,13 @@ var Script;
             spriteNode.setAnimation(duck);
             currentAnimation = duck;
         }
+        else if (currentAnimation != walk) {
+            spriteNode.setAnimation(walk);
+            spriteNode.setFrameDirection(1);
+            spriteNode.framerate = 12;
+            currentAnimation = walk;
+        }
         else {
-            if (currentAnimation != walk) {
-                spriteNode.setAnimation(walk);
-                spriteNode.setFrameDirection(1);
-                spriteNode.framerate = 12;
-                currentAnimation = walk;
-            }
             spriteNode.showFrame(3);
         }
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT])) {
