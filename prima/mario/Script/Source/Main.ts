@@ -2,10 +2,10 @@ namespace Script {
   import ƒ = FudgeCore;
   import ƒAid = FudgeAid;
 
-  const gravity: number = -8;
+  const gravity: number = -80;
   const sprintSpeed: number = 10;
   const walkSpeed: number = 5;
-  const jumpForce: number = 5;
+  const jumpForce: number = 20;
 
 //Variables
 let marioSpeed: number;
@@ -52,7 +52,7 @@ let justJumped: boolean;
     let cmpAudio: ƒ.ComponentAudio = new ƒ.ComponentAudio(audioBeep, false, false);
     cmpAudio.connect(true);
     cmpAudio.volume = 1;
-    cmpAudio.play(true);
+    cmpAudio.play(false);
 
     branch.addComponent(cmpAudio);
 
@@ -137,8 +137,6 @@ let justJumped: boolean;
 
     let deltaTime:number = ƒ.Loop.timeFrameGame/1000;
     velocityY += gravity * deltaTime;
-    let yOffset: number = velocityY * deltaTime;
-    marioPosTransform.mtxLocal.translateY(yOffset);
 
     if(ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && !justJumped && onGround){
       velocityY = jumpForce;
@@ -152,19 +150,28 @@ let justJumped: boolean;
     }
 
     console.log(pos.y + velocityY);
-    if (pos.y + velocityY > 0.3){
+
+    let yOffset: number = velocityY * deltaTime;
+    marioPosTransform.mtxLocal.translateY(yOffset);
+
+    checkCollision();
+
+    
+
+    // if((pos.y + velocityY < 0.3) && pos.y < 0.3){
+    //   onGround = true;
+    //   velocityY = 0;
+    //   pos.y = 0.3;
+    //   marioPosTransform.mtxLocal.translation = pos;
+    //   if(currentAnimation != walk && currentAnimation != duck){
+    //     spriteNode.setAnimation(walk);
+    //     currentAnimation = walk;
+    //   }
+    // }
+
+    if(!onGround){
       spriteNode.setAnimation(jump);
       currentAnimation = jump;
-    }
-    else {
-      onGround = true;
-      velocityY = 0;
-      pos.y = 0.3;
-      marioPosTransform.mtxLocal.translation = pos;
-      if(currentAnimation != walk && currentAnimation != duck){
-        spriteNode.setAnimation(walk);
-        currentAnimation = walk;
-      }
     }
     
 
@@ -203,4 +210,25 @@ let justJumped: boolean;
     }
      
   }
+
+
+  function checkCollision(): void {
+    let blocks: ƒ.Node[] = floorPositions;
+    console.log(blocks);
+    let pos: ƒ.Vector3 = marioPosNode.mtxLocal.translation;
+    for (let block of blocks) {
+      let posBlock: ƒ.Vector3 = block.mtxLocal.translation;
+      let posParentBlock: ƒ.Vector3 = block.getParent().mtxLocal.translation;
+      let calcPosBlock: ƒ.Vector3 = ƒ.Vector3.SUM(posBlock, posParentBlock);
+      if (Math.abs(pos.x - calcPosBlock.x) < 0.6) {
+        if (pos.y < calcPosBlock.y + 1.3) {
+          pos.y = calcPosBlock.y + 1.3;
+          marioPosNode.mtxLocal.translation = pos;
+          velocityY = 0;
+          onGround = true
+        }
+      }
+    }
+  }
+
   }

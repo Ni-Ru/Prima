@@ -14,21 +14,21 @@ var Script;
             if (ƒ.Project.mode == ƒ.MODE.EDITOR)
                 return;
             // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
-                case "componentAdd" /* ƒ.EVENT.COMPONENT_ADD */:
+                case "componentAdd" /* COMPONENT_ADD */:
                     ƒ.Debug.log(this.message, this.node);
                     break;
-                case "componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                case "componentRemove" /* COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
                     break;
-                case "nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */:
+                case "nodeDeserialized" /* NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
@@ -40,10 +40,10 @@ var Script;
 (function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
-    const gravity = -8;
+    const gravity = -80;
     const sprintSpeed = 10;
     const walkSpeed = 5;
-    const jumpForce = 5;
+    const jumpForce = 20;
     //Variables
     let marioSpeed;
     let directionRight;
@@ -70,7 +70,7 @@ var Script;
     //let marioNode: ƒ.Node;
     function start(_event) {
         viewport = _event.detail;
-        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
+        ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         //ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
         hndLoad();
         let branch = viewport.getBranch();
@@ -80,7 +80,7 @@ var Script;
         let cmpAudio = new ƒ.ComponentAudio(audioBeep, false, false);
         cmpAudio.connect(true);
         cmpAudio.volume = 1;
-        cmpAudio.play(true);
+        cmpAudio.play(false);
         branch.addComponent(cmpAudio);
         marioPosNode = branch.getChildrenByName("Mario position")[0];
         floorListNode = branch.getChildrenByName("All Floors")[0];
@@ -137,8 +137,6 @@ var Script;
         pos = marioPosTransform.mtxLocal.translation;
         let deltaTime = ƒ.Loop.timeFrameGame / 1000;
         velocityY += gravity * deltaTime;
-        let yOffset = velocityY * deltaTime;
-        marioPosTransform.mtxLocal.translateY(yOffset);
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && !justJumped && onGround) {
             velocityY = jumpForce;
             onGround = false;
@@ -150,19 +148,22 @@ var Script;
             justJumped = false;
         }
         console.log(pos.y + velocityY);
-        if (pos.y + velocityY > 0.3) {
+        let yOffset = velocityY * deltaTime;
+        marioPosTransform.mtxLocal.translateY(yOffset);
+        checkCollision();
+        // if((pos.y + velocityY < 0.3) && pos.y < 0.3){
+        //   onGround = true;
+        //   velocityY = 0;
+        //   pos.y = 0.3;
+        //   marioPosTransform.mtxLocal.translation = pos;
+        //   if(currentAnimation != walk && currentAnimation != duck){
+        //     spriteNode.setAnimation(walk);
+        //     currentAnimation = walk;
+        //   }
+        // }
+        if (!onGround) {
             spriteNode.setAnimation(jump);
             currentAnimation = jump;
-        }
-        else {
-            onGround = true;
-            velocityY = 0;
-            pos.y = 0.3;
-            marioPosTransform.mtxLocal.translation = pos;
-            if (currentAnimation != walk && currentAnimation != duck) {
-                spriteNode.setAnimation(walk);
-                currentAnimation = walk;
-            }
         }
         viewport.draw();
         ƒ.AudioManager.default.update();
@@ -198,6 +199,24 @@ var Script;
         }
         else {
             marioSpeed = walkSpeed;
+        }
+    }
+    function checkCollision() {
+        let blocks = floorPositions;
+        console.log(blocks);
+        let pos = marioPosNode.mtxLocal.translation;
+        for (let block of blocks) {
+            let posBlock = block.mtxLocal.translation;
+            let posParentBlock = block.getParent().mtxLocal.translation;
+            let calcPosBlock = ƒ.Vector3.SUM(posBlock, posParentBlock);
+            if (Math.abs(pos.x - calcPosBlock.x) < 0.6) {
+                if (pos.y < calcPosBlock.y + 1.3) {
+                    pos.y = calcPosBlock.y + 1.3;
+                    marioPosNode.mtxLocal.translation = pos;
+                    velocityY = 0;
+                    onGround = true;
+                }
+            }
         }
     }
 })(Script || (Script = {}));
