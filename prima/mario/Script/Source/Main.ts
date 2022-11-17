@@ -45,14 +45,14 @@ let justJumped: boolean;
     let branch: ƒ.Node = viewport.getBranch();
     let audioBeep: ƒ.Audio;
 
-    console.log(branch);
+    // console.log(branch);
 
     audioBeep = new ƒ.Audio("audio/SuperMarioBros.mp3");
 
     let cmpAudio: ƒ.ComponentAudio = new ƒ.ComponentAudio(audioBeep, false, false);
     cmpAudio.connect(true);
     cmpAudio.volume = 1;
-    cmpAudio.play(false);
+    cmpAudio.play(true);
 
     branch.addComponent(cmpAudio);
 
@@ -70,7 +70,7 @@ let justJumped: boolean;
       }
     }
 
-    console.log(floorPositions);
+    // console.log(floorPositions);
 
     marioPosNode.mtxLocal.translation.y
     //marioNode= marioPosNode.getChildrenByName("Mario")[0];
@@ -149,7 +149,7 @@ let justJumped: boolean;
       justJumped = false;
     }
 
-    console.log(pos.y + velocityY);
+    // console.log(pos.y + velocityY);
 
     let yOffset: number = velocityY * deltaTime;
     marioPosTransform.mtxLocal.translateY(yOffset);
@@ -214,7 +214,7 @@ let justJumped: boolean;
 
   function checkCollision(): void {
     let blocks: ƒ.Node[] = floorPositions;
-    console.log(blocks);
+    // console.log(blocks);
     let pos: ƒ.Vector3 = marioPosNode.mtxLocal.translation;
     for (let block of blocks) {
       let posBlock: ƒ.Vector3 = block.mtxLocal.translation;

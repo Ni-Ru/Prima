@@ -77,6 +77,25 @@
       }
     }
   },
+  "MeshCube|2022-11-10T13:31:24.957Z|72780": {
+    "ƒ.MeshCube": {
+      "idResource": "MeshCube|2022-11-10T13:31:24.957Z|72780",
+      "name": "MeshCube",
+      "type": "MeshCube"
+    }
+  },
+  "Material|2022-11-10T13:32:26.217Z|24430": {
+    "ƒ.Material": {
+      "name": "ShaderLit",
+      "idResource": "Material|2022-11-10T13:32:26.217Z|24430",
+      "shader": "ShaderLit",
+      "coat": {
+        "ƒ.CoatColored": {
+          "color": "[1, 1, 1, 1]"
+        }
+      }
+    }
+  },
   "Graph|2022-10-06T13:06:38.848Z|81769": {
     "ƒ.Graph": {
       "name": "level",
@@ -4419,6 +4438,70 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "cube",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshCube|2022-11-10T13:31:24.957Z|72780",
+                    "pivot": {
+                      "translation": "[0, 5, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[0.7725490196078432, 0.06666666666666667, 0.06666666666666667, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2022-11-10T13:32:26.217Z|24430"
+                  }
+                }
+              ],
+              "ScriptRotator": [
+                {
+                  "Script.ScriptRotator": {
+                    "active": true,
+                    "message": "halloOOOOOOOO"
+                  }
+                }
+              ],
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": []
           }
         }
       ],
