@@ -2,7 +2,7 @@
   "MeshObj|2022-11-17T13:02:51.513Z|27876": {
     "ƒ.MeshObj": {
       "idResource": "MeshObj|2022-11-17T13:02:51.513Z|27876",
-      "name": "objects\\spaceship.obj",
+      "name": "starship\\spaceship.obj",
       "type": "MeshObj",
       "url": "objects\\spaceship.obj"
     }
@@ -36,7 +36,7 @@
               {
                 "ƒ.GraphInstance": {
                   "deserializeFromSource": true,
-                  "name": "floor",
+                  "name": "Floor",
                   "idSource": "Graph|2022-11-17T14:20:07.672Z|43006"
                 }
               }
@@ -67,7 +67,7 @@
               {
                 "ƒ.GraphInstance": {
                   "deserializeFromSource": true,
-                  "name": "ship",
+                  "name": "Ship",
                   "idSource": "Graph|2022-11-17T14:23:29.267Z|46270"
                 }
               }
@@ -84,13 +84,63 @@
                 "ƒ.Node": {
                   "name": "enemy_pos",
                   "active": true,
-                  "components": {},
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[5, 5, -15]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
                   "children": [
                     {
                       "ƒ.Node": {
                         "name": "enemy",
                         "active": true,
-                        "components": {},
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2022-11-22T14:31:02.083Z|96254",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-11-17T14:25:54.270Z|45900"
+                              }
+                            }
+                          ],
+                          "ComponentLight": []
+                        },
                         "children": []
                       }
                     }
@@ -296,6 +346,14 @@
       "children": [],
       "idResource": "Graph|2022-11-17T14:23:29.267Z|46270",
       "type": "Graph"
+    }
+  },
+  "MeshObj|2022-11-22T14:31:02.083Z|96254": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-11-22T14:31:02.083Z|96254",
+      "name": "enemy\\enemyship.obj",
+      "type": "MeshObj",
+      "url": "objects\\enemyship.obj"
     }
   }
 }
