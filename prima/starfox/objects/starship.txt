@@ -1,0 +1,3 @@
+height: 1m
+width: 6m
+length: 7m

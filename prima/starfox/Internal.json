@@ -7,19 +7,189 @@
       "url": "objects\\spaceship.obj"
     }
   },
+  "Material|2022-11-17T13:29:11.683Z|74993": {
+    "ƒ.Material": {
+      "name": "ShaderGround",
+      "idResource": "Material|2022-11-17T13:29:11.683Z|74993",
+      "shader": "ShaderGouraud",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[0.47058823529411764, 0.4196078431372549, 0.09019607843137255, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
+    }
+  },
   "Graph|2022-11-17T13:12:05.983Z|78963": {
     "ƒ.Graph": {
       "name": "Level",
+      "active": true,
+      "components": {},
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "Floor_pos",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.GraphInstance": {
+                  "deserializeFromSource": true,
+                  "name": "floor",
+                  "idSource": "Graph|2022-11-17T14:20:07.672Z|43006"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Ship_Pos",
+            "active": true,
+            "components": {
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 5, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": [
+              {
+                "ƒ.GraphInstance": {
+                  "deserializeFromSource": true,
+                  "name": "ship",
+                  "idSource": "Graph|2022-11-17T14:23:29.267Z|46270"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Enemy_ships",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "enemy_pos",
+                  "active": true,
+                  "components": {},
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "enemy",
+                        "active": true,
+                        "components": {},
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "enemy_pos",
+                  "active": true,
+                  "components": {},
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "enemy",
+                        "active": true,
+                        "components": {},
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Buildings",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "gate_pos",
+                  "active": true,
+                  "components": {},
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "gate",
+                        "active": true,
+                        "components": {},
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "idResource": "Graph|2022-11-17T13:12:05.983Z|78963",
+      "type": "Graph"
+    }
+  },
+  "MeshTerrain|2022-11-17T14:19:24.568Z|16055": {
+    "ƒ.MeshTerrain": {
+      "idResource": "MeshTerrain|2022-11-17T14:19:24.568Z|16055",
+      "name": "MeshTerrain",
+      "type": "MeshTerrain",
+      "seed": 0,
+      "scale": "[8, 12]",
+      "resolution": "[100, 100]"
+    }
+  },
+  "Graph|2022-11-17T14:20:07.672Z|43006": {
+    "ƒ.Graph": {
+      "name": "Floor",
       "active": true,
       "components": {
         "ComponentMesh": [
           {
             "ƒ.ComponentMesh": {
-              "idMesh": "MeshObj|2022-11-17T13:02:51.513Z|27876",
+              "idMesh": "MeshTerrain|2022-11-17T14:19:24.568Z|16055",
               "pivot": {
                 "translation": "[0, 0, 0]",
                 "rotation": "[0, 0, 0]",
+                "scaling": "[100, 1, 100]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentLight": [
+          {
+            "ƒ.ComponentLight": {
+              "pivot": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[50, 0, 30]",
                 "scaling": "[1, 1, 1]"
+              },
+              "light": {
+                "ƒ.LightDirectional": {
+                  "color": "[1, 1, 1, 1]"
+                }
               },
               "Component": {
                 "active": true
@@ -44,36 +214,17 @@
               "idMaterial": "Material|2022-11-17T13:29:11.683Z|74993"
             }
           }
-        ],
-        "ComponentLight": [
-          {
-            "ƒ.ComponentLight": {
-              "pivot": {
-                "translation": "[0, 0, 0]",
-                "rotation": "[0, 0, 0]",
-                "scaling": "[1, 1, 1]"
-              },
-              "light": {
-                "ƒ.LightDirectional": {
-                  "color": "[1, 1, 1, 1]"
-                }
-              },
-              "Component": {
-                "active": true
-              }
-            }
-          }
         ]
       },
       "children": [],
-      "idResource": "Graph|2022-11-17T13:12:05.983Z|78963",
+      "idResource": "Graph|2022-11-17T14:20:07.672Z|43006",
       "type": "Graph"
     }
   },
-  "Material|2022-11-17T13:29:11.683Z|74993": {
+  "Material|2022-11-17T14:25:54.270Z|45900": {
     "ƒ.Material": {
-      "name": "ShaderGouraud",
-      "idResource": "Material|2022-11-17T13:29:11.683Z|74993",
+      "name": "ShaderShip",
+      "idResource": "Material|2022-11-17T14:25:54.270Z|45900",
       "shader": "ShaderGouraud",
       "coat": {
         "ƒ.CoatRemissive": {
@@ -82,6 +233,69 @@
           "specular": 0
         }
       }
+    }
+  },
+  "Graph|2022-11-17T14:23:29.267Z|46270": {
+    "ƒ.Graph": {
+      "name": "Ship",
+      "active": true,
+      "components": {
+        "ComponentMesh": [
+          {
+            "ƒ.ComponentMesh": {
+              "idMesh": "MeshObj|2022-11-17T13:02:51.513Z|27876",
+              "pivot": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[1, 1, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentLight": [
+          {
+            "ƒ.ComponentLight": {
+              "pivot": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[90, 0, 10]",
+                "scaling": "[1, 1, 1]"
+              },
+              "light": {
+                "ƒ.LightDirectional": {
+                  "color": "[0.47058823529411764, 0.4196078431372549, 0.09019607843137255, 1]"
+                }
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentMaterial": [
+          {
+            "ƒ.ComponentMaterial": {
+              "sortForAlpha": false,
+              "clrPrimary": "[0.5019607843137255, 0.5019607843137255, 0.5019607843137255, 1]",
+              "clrSecondary": "[1, 1, 1, 1]",
+              "pivot": {
+                "translation": "[0, 0]",
+                "rotation": 0,
+                "scaling": "[1, 1]"
+              },
+              "Component": {
+                "active": true
+              },
+              "idMaterial": "Material|2022-11-17T14:25:54.270Z|45900"
+            }
+          }
+        ]
+      },
+      "children": [],
+      "idResource": "Graph|2022-11-17T14:23:29.267Z|46270",
+      "type": "Graph"
     }
   }
 }
