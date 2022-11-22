@@ -21,6 +21,28 @@
       }
     }
   },
+  "MeshObj|2022-11-22T14:31:02.083Z|96254": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-11-22T14:31:02.083Z|96254",
+      "name": "enemy\\enemyship.obj",
+      "type": "MeshObj",
+      "url": "objects\\enemyship.obj"
+    }
+  },
+  "Material|2022-11-17T14:25:54.270Z|45900": {
+    "ƒ.Material": {
+      "name": "ShaderShip",
+      "idResource": "Material|2022-11-17T14:25:54.270Z|45900",
+      "shader": "ShaderGouraud",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[1, 1, 1, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
+    }
+  },
   "Graph|2022-11-17T13:12:05.983Z|78963": {
     "ƒ.Graph": {
       "name": "Level",
@@ -89,7 +111,7 @@
                       {
                         "ƒ.ComponentTransform": {
                           "local": {
-                            "translation": "[5, 5, -15]",
+                            "translation": "[5, 5, -25]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[1, 1, 1]"
                           },
@@ -138,8 +160,7 @@
                                 "idMaterial": "Material|2022-11-17T14:25:54.270Z|45900"
                               }
                             }
-                          ],
-                          "ComponentLight": []
+                          ]
                         },
                         "children": []
                       }
@@ -271,20 +292,6 @@
       "type": "Graph"
     }
   },
-  "Material|2022-11-17T14:25:54.270Z|45900": {
-    "ƒ.Material": {
-      "name": "ShaderShip",
-      "idResource": "Material|2022-11-17T14:25:54.270Z|45900",
-      "shader": "ShaderGouraud",
-      "coat": {
-        "ƒ.CoatRemissive": {
-          "color": "[1, 1, 1, 1]",
-          "diffuse": 1,
-          "specular": 0
-        }
-      }
-    }
-  },
   "Graph|2022-11-17T14:23:29.267Z|46270": {
     "ƒ.Graph": {
       "name": "Ship",
@@ -346,14 +353,6 @@
       "children": [],
       "idResource": "Graph|2022-11-17T14:23:29.267Z|46270",
       "type": "Graph"
-    }
-  },
-  "MeshObj|2022-11-22T14:31:02.083Z|96254": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2022-11-22T14:31:02.083Z|96254",
-      "name": "enemy\\enemyship.obj",
-      "type": "MeshObj",
-      "url": "objects\\enemyship.obj"
     }
   }
 }
