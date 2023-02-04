@@ -92,16 +92,16 @@ namespace Script {
             }
           }else{
             if(Math.abs(this.pos.y - obstacleCalcPos.y) <= (this.obstacleHeight/2)){
-              if(Math.abs(this.pos.x - this.obstaclePos.x) < 1){
+              if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
                 if (obstacle.name === "door_Pos"){
                   interactCmp = this.obstacleNode.getComponent(InteractComponent);
                   interactCmp.update();
                   if(!openDoor){
-                    this.doorCollission();
+                    this.wallCollission();
                   }
                 }
                 else{
-                  this.doorCollission();
+                  this.wallCollission();
                 }
               }
             }
@@ -110,7 +110,7 @@ namespace Script {
       }
     }
 
-    doorCollission(){
+    wallCollission(){
       if(Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength/2) + 0.25) {
         if(this.pos.x > this.obstaclePos.x){
           allowWalkLeft = false;
@@ -118,7 +118,6 @@ namespace Script {
           this.characterPos.mtxLocal.translation = this.pos;
         }else{
           allowWalkRight = false;
-          console.log(allowWalkRight)
           this.pos.x = this.obstaclePos.x - (this.obstacleLength/2) - 0.25;
           this.characterPos.mtxLocal.translation = this.pos;
         }

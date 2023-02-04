@@ -85,6 +85,67 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    Script.openDoor = false;
+    let doorTransform;
+    class DoorComponent extends fc.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = fc.Component.registerSubclass(DoorComponent);
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (fc.Project.mode == fc.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* NODE_DESERIALIZED */:
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    break;
+            }
+        };
+        interaction() {
+            doorTransform = this.node.getComponent(fc.ComponentTransform);
+            switch (Script.openDoor) {
+                case true:
+                    this.closeDoor();
+                    Script.openDoor = false;
+                    break;
+                case false:
+                    this.openDoor();
+                    Script.openDoor = true;
+                    Script.allowWalkLeft = true;
+                    Script.allowWalkRight = true;
+                    break;
+            }
+        }
+        openDoor() {
+            doorTransform.mtxLocal.translateX(0.25);
+            doorTransform.mtxLocal.scaleX(3);
+            doorTransform.mtxLocal.translateZ(-0.1);
+        }
+        closeDoor() {
+            doorTransform.mtxLocal.scaleX(1 / 3);
+            doorTransform.mtxLocal.translateX(-0.25);
+            doorTransform.mtxLocal.translateZ(0.1);
+        }
+    }
+    Script.DoorComponent = DoorComponent;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var fc = FudgeCore;
+    fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     const gravity = -80;
     let ySpeed = 0;
     let velocityY = 0;
@@ -160,16 +221,16 @@ var Script;
                     }
                     else {
                         if (Math.abs(this.pos.y - obstacleCalcPos.y) <= (this.obstacleHeight / 2)) {
-                            if (Math.abs(this.pos.x - this.obstaclePos.x) < 1) {
+                            if (Math.abs(this.pos.x - this.obstaclePos.x) < 2) {
                                 if (obstacle.name === "door_Pos") {
                                     interactCmp = this.obstacleNode.getComponent(Script.InteractComponent);
                                     interactCmp.update();
                                     if (!Script.openDoor) {
-                                        this.doorCollission();
+                                        this.wallCollission();
                                     }
                                 }
                                 else {
-                                    this.doorCollission();
+                                    this.wallCollission();
                                 }
                             }
                         }
@@ -177,7 +238,7 @@ var Script;
                 }
             }
         }
-        doorCollission() {
+        wallCollission() {
             if (Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength / 2) + 0.25) {
                 if (this.pos.x > this.obstaclePos.x) {
                     Script.allowWalkLeft = false;
@@ -186,7 +247,6 @@ var Script;
                 }
                 else {
                     Script.allowWalkRight = false;
-                    console.log(Script.allowWalkRight);
                     this.pos.x = this.obstaclePos.x - (this.obstacleLength / 2) - 0.25;
                     this.characterPos.mtxLocal.translation = this.pos;
                 }
@@ -203,7 +263,7 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
-    Script.openDoor = false;
+    let DoorCmp;
     class InteractComponent extends fc.ComponentScript {
         static iSubclass = fc.Component.registerSubclass(InteractComponent);
         constructor() {
@@ -232,23 +292,45 @@ var Script;
             }
         };
         update() {
+            this.checkPlayerPos();
+            console.log(this.node.name);
+        }
+        actionControls() {
+            DoorCmp = this.node.getComponent(Script.DoorComponent);
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])) {
                 if (!this.keyEPressed) {
                     this.keyEPressed = true;
-                    switch (Script.openDoor) {
-                        case true:
-                            Script.openDoor = false;
+                    switch (this.node.name) {
+                        case "Door":
+                            DoorCmp.interaction();
                             break;
-                        case false:
-                            console.log(Script.openDoor);
+                        case "false":
                             Script.openDoor = true;
-                            console.log(Script.openDoor);
+                            Script.allowWalkLeft = true;
+                            Script.allowWalkRight = true;
                             break;
                     }
                 }
             }
             else {
                 this.keyEPressed = false;
+            }
+        }
+        showInteract() {
+            this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+        }
+        noInteract() {
+            this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
+        }
+        checkPlayerPos() {
+            let playerPos = Script.characterNode.getParent().mtxLocal.translation;
+            let interactablePos = this.node.getParent().mtxLocal.translation;
+            if (Math.abs(playerPos.x - interactablePos.x) < 1) {
+                this.showInteract();
+                this.actionControls();
+            }
+            else {
+                this.noInteract();
             }
         }
     }
@@ -264,13 +346,12 @@ var Script;
     document.addEventListener("interactiveViewportStarted", start);
     let characterCmp;
     let gravityCmp;
-    let characterNode;
     function start(_event) {
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
-        characterNode = Script.branch.getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
-        characterCmp = characterNode.getComponent(Script.CharacterComponent);
-        gravityCmp = characterNode.getComponent(Script.GravityComponent);
+        Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
+        characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
+        gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fc.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }

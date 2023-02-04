@@ -22,6 +22,18 @@ declare namespace Script {
 }
 declare namespace Script {
     import fc = FudgeCore;
+    let openDoor: boolean;
+    class DoorComponent extends fc.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        interaction(): void;
+        openDoor(): void;
+        closeDoor(): void;
+    }
+}
+declare namespace Script {
+    import fc = FudgeCore;
     class GravityComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
@@ -36,18 +48,21 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
         update(deltaTime: number): void;
         checkCollission(): void;
-        doorCollission(): void;
+        wallCollission(): void;
     }
 }
 declare namespace Script {
     import fc = FudgeCore;
-    let openDoor: boolean;
     class InteractComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
         private keyEPressed;
         hndEvent: (_event: Event) => void;
         update(): void;
+        actionControls(): void;
+        showInteract(): void;
+        noInteract(): void;
+        checkPlayerPos(): void;
     }
 }
 declare namespace Script {
@@ -56,4 +71,5 @@ declare namespace Script {
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
     let branch: fc.Node;
+    let characterNode: fc.Node;
 }

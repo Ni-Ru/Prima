@@ -11,13 +11,13 @@ namespace Script {
 
   let characterCmp: CharacterComponent;
   let gravityCmp: GravityComponent;
-  let characterNode: fc.Node;
+  export let characterNode: fc.Node;
 
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
     branch = viewport.getBranch();
 
-    characterNode = branch.getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
+    characterNode = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
     characterCmp = characterNode.getComponent(CharacterComponent);
     gravityCmp = characterNode.getComponent(GravityComponent);
 

@@ -2,12 +2,14 @@ namespace Script {
   import fc = FudgeCore;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
-  let DoorCmp: DoorComponent;
+  export let openDoor: boolean = false;
+  let doorTransform: fc.ComponentTransform
+  
 
+  export class DoorComponent extends fc.ComponentScript {
+    // Register the script as component for use in the editor via drag&drop
+    public static readonly iSubclass: number = fc.Component.registerSubclass(DoorComponent);
 
-  export class InteractComponent extends fc.ComponentScript {
-   
-    public static readonly iSubclass: number = fc.Component.registerSubclass(InteractComponent);
 
 
     constructor() {
@@ -22,8 +24,6 @@ namespace Script {
       this.addEventListener(fc.EVENT.COMPONENT_REMOVE, this.hndEvent);
       this.addEventListener(fc.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
-
-    private keyEPressed: boolean = false;
 
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
@@ -40,52 +40,32 @@ namespace Script {
       }
     }
 
-
-    update() {
-      this.checkPlayerPos();
-      console.log(this.node.name)
-    }
-
-    actionControls(){
-      DoorCmp = this.node.getComponent(DoorComponent);
-
-      if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])){
-        if(!this.keyEPressed) {
-          this.keyEPressed = true;
-          switch (this.node.name){
-            case "Door":
-              DoorCmp.interaction();
-              break;
-            case "false":
-              openDoor = true;
-              allowWalkLeft = true;
-              allowWalkRight = true;
-              break;  
-          }
-        }
-      } else {
-        this.keyEPressed = false;
+    interaction(){
+      doorTransform = this.node.getComponent(fc.ComponentTransform);
+      switch (openDoor){
+        case true:
+          this.closeDoor();
+          openDoor = false;
+          break;
+        case false:
+          this.openDoor()
+          openDoor = true;
+          allowWalkLeft = true;
+          allowWalkRight = true;
+          break;  
       }
     }
 
-    showInteract(){
-      this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+    openDoor(){
+      doorTransform.mtxLocal.translateX(0.25);
+      doorTransform.mtxLocal.scaleX(3);
+      doorTransform.mtxLocal.translateZ(-0.1);
     }
 
-    noInteract(){
-      this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
-    }
-
-    checkPlayerPos(){
-      let playerPos: fc.Vector3 = characterNode.getParent().mtxLocal.translation;
-      let interactablePos: fc.Vector3 = this.node.getParent().mtxLocal.translation;
-      if(Math.abs(playerPos.x - interactablePos.x) < 1){
-        this.showInteract();
-        this.actionControls();
-      } else {
-        this.noInteract();
-      }
-
+    closeDoor(){
+      doorTransform.mtxLocal.scaleX(1/3);
+      doorTransform.mtxLocal.translateX(-0.25);
+      doorTransform.mtxLocal.translateZ(0.1);
     }
 
     // protected reduceMutator(_mutator: ƒ.Mutator): void {
@@ -94,4 +74,3 @@ namespace Script {
     // }
   }
 }
-

@@ -33,37 +33,6 @@
         },
         {
           "ƒ.Node": {
-            "name": "character_Pos",
-            "active": true,
-            "components": {
-              "ComponentTransform": [
-                {
-                  "ƒ.ComponentTransform": {
-                    "local": {
-                      "translation": "[0, 0, 0]",
-                      "rotation": "[0, 0, 0]",
-                      "scaling": "[1, 1, 1]"
-                    },
-                    "Component": {
-                      "active": true
-                    }
-                  }
-                }
-              ]
-            },
-            "children": [
-              {
-                "ƒ.GraphInstance": {
-                  "deserializeFromSource": true,
-                  "name": "Character",
-                  "idSource": "Graph|2023-01-07T14:43:21.981Z|38454"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "ƒ.Node": {
             "name": "items",
             "active": true,
             "components": {},
@@ -392,6 +361,46 @@
               }
             ]
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Player",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "character_Pos",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.GraphInstance": {
+                        "deserializeFromSource": true,
+                        "name": "Character",
+                        "idSource": "Graph|2023-01-07T14:43:21.981Z|38454"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         }
       ],
       "idResource": "Graph|2023-01-07T14:42:07.274Z|49984",
@@ -472,13 +481,6 @@
       "type": "Graph"
     }
   },
-  "MeshCube|2023-02-04T00:32:32.175Z|33804": {
-    "ƒ.MeshCube": {
-      "idResource": "MeshCube|2023-02-04T00:32:32.175Z|33804",
-      "name": "MeshCube",
-      "type": "MeshCube"
-    }
-  },
   "Graph|2023-02-04T00:32:10.829Z|44980": {
     "ƒ.Graph": {
       "name": "Door",
@@ -488,7 +490,7 @@
           {
             "ƒ.ComponentMaterial": {
               "sortForAlpha": false,
-              "clrPrimary": "[0.12549019607843137, 0.22745098039215686, 0.996078431372549, 1]",
+              "clrPrimary": "[1, 0.9686274509803922, 0, 0]",
               "clrSecondary": "[1, 1, 1, 1]",
               "pivot": {
                 "translation": "[0, 0]",
@@ -505,11 +507,11 @@
         "ComponentMesh": [
           {
             "ƒ.ComponentMesh": {
-              "idMesh": "MeshCube|2023-02-04T00:32:32.175Z|33804",
+              "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
               "pivot": {
                 "translation": "[0, 0, 0]",
                 "rotation": "[0, 0, 0]",
-                "scaling": "[0.20000000298023224, 1.2000000476837158, 0.5]"
+                "scaling": "[0.23499999940395355, 1.2350000143051147, 1]"
               },
               "Component": {
                 "active": true
@@ -521,7 +523,7 @@
           {
             "ƒ.ComponentTransform": {
               "local": {
-                "translation": "[0, 0.6000000238418579, 0]",
+                "translation": "[0, 0.6000000238418579, 0.003000000026077032]",
                 "rotation": "[0, 0, 0]",
                 "scaling": "[1, 1, 1]"
               },
@@ -535,12 +537,76 @@
           {
             "Script.InteractComponent": {
               "active": true,
-              "message": "InteractComponent added to "
+              "keyEPressed": false
+            }
+          }
+        ],
+        "DoorComponent": [
+          {
+            "Script.DoorComponent": {
+              "active": true
             }
           }
         ]
       },
-      "children": [],
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "Doortexture",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[0.19999997317790985, 1.2000000476837158, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[0.11764705882352941, 0, 1, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                  }
+                }
+              ],
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0.009999999776482582]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      ],
       "idResource": "Graph|2023-02-04T00:32:10.829Z|44980",
       "type": "Graph"
     }
