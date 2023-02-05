@@ -95,7 +95,8 @@ namespace Script {
               this.yCollission();
               break;
             default:
-              if(Math.abs(this.pos.y - this.obstacleCalcPos.y) <= (this.obstacleHeight/2)){
+              if((Math.abs(this.pos.y - ((this.obstaclePos.y + 0.5) + ((this.obstacleHeight/2) -1) ))) < (this.obstacleHeight/2) +0.5){
+                console.log(this.obstacleHeight);
                 if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
                   switch(obstacle.name){
                     case "door_Pos":
@@ -121,20 +122,20 @@ namespace Script {
     }
 
     wallCollission(){
-      if(Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength/2) + 0.25) {
-        if(this.pos.x > this.obstaclePos.x){
-          allowWalkLeft = false;
-          this.pos.x = this.obstaclePos.x + (this.obstacleLength/2) + 0.25;
-          this.characterPos.mtxLocal.translation = this.pos;
-        }else{
-          allowWalkRight = false;
-          this.pos.x = this.obstaclePos.x - (this.obstacleLength/2) - 0.25;
-          this.characterPos.mtxLocal.translation = this.pos;
+        if(Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength/2) + 0.25) {
+          if(this.pos.x > this.obstaclePos.x){
+            allowWalkLeft = false;
+            this.pos.x = this.obstaclePos.x + (this.obstacleLength/2) + 0.25;
+            this.characterPos.mtxLocal.translation = this.pos;
+          }else{
+            allowWalkRight = false;
+            this.pos.x = this.obstaclePos.x - (this.obstacleLength/2) - 0.25;
+            this.characterPos.mtxLocal.translation = this.pos;
+          }
+        } else{
+          allowWalkLeft = true;
+          allowWalkRight = true;
         }
-      } else{
-        allowWalkLeft = true;
-        allowWalkRight = true;
-      }
     }
 
     yCollission(){
