@@ -8,6 +8,7 @@ namespace Script {
   let velocityY: number = 0;
 
   let interactCmp: InteractComponent;
+  
 
   export class GravityComponent extends fc.ComponentScript {
 
@@ -26,6 +27,7 @@ namespace Script {
       this.addEventListener(fc.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
+    
 
     public walkSpeed: number = 0;
 
@@ -37,6 +39,8 @@ namespace Script {
     private obstacleMesh: fc.ComponentMesh;
     private obstacleLength: number;
     private obstacleHeight: number;
+    private obstacleNodePos: fc.Vector3;
+    private obstacleCalcPos: fc.Vector3;
 
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
@@ -64,47 +68,51 @@ namespace Script {
     }
 
     checkCollission(){
+
       let floors: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
       let walls: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("walls")[0].getChildrenByName("wall_Pos");
       let doors: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
-      let obstacles = [floors, walls, doors];
+      let stairs: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
+
+      let obstacles = [floors, walls, doors, stairs];
       this.pos = this.characterPos.mtxLocal.translation;
       for (let obstacleType of obstacles){
         for (let obstacle of obstacleType) {
+
           this.obstaclePos = obstacle.mtxLocal.translation;
           this.obstacleNode = obstacle.getChildren()[0];
           this.obstacleMesh = this.obstacleNode.getComponent(fc.ComponentMesh);
           this.obstacleLength = this.obstacleMesh.mtxPivot.getX().x;
           this.obstacleHeight = this.obstacleMesh.mtxPivot.getY().y;
-          
-          let obstacleNodePos: fc.Vector3 = this.obstacleNode.mtxLocal.translation;
-          let obstacleCalcPos: fc.Vector3 = fc.Vector3.SUM(this.obstaclePos, obstacleNodePos);
-          if(obstacle.name === "floor_Pos"){
-            if(Math.abs(this.pos.x - obstacleCalcPos.x) < (this.obstacleLength/2) + 0.2){
-              if(Math.abs(this.pos.y - this.obstaclePos.y) < 1){
-                if(this.pos.y < this.obstaclePos.y) {
-                  this.pos.y = this.obstaclePos.y;
-                  this.characterPos.mtxLocal.translation = this.pos;
-                  ySpeed = 0;
-                  velocityY = 0;
-                }
-              }
-            }
-          }else{
-            if(Math.abs(this.pos.y - obstacleCalcPos.y) <= (this.obstacleHeight/2)){
-              if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
-                if (obstacle.name === "door_Pos"){
-                  interactCmp = this.obstacleNode.getComponent(InteractComponent);
-                  interactCmp.update();
-                  if(!openDoor){
-                    this.wallCollission();
+          this.obstacleNodePos = this.obstacleNode.mtxLocal.translation;
+          this.obstacleCalcPos = fc.Vector3.SUM(this.obstaclePos, this.obstacleNodePos);
+          interactCmp = this.obstacleNode.getComponent(InteractComponent);
+
+          switch(obstacle.name){
+            case "floor_Pos":
+              this.yCollission();
+              break;
+            default:
+              if(Math.abs(this.pos.y - this.obstacleCalcPos.y) <= (this.obstacleHeight/2)){
+                if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
+                  switch(obstacle.name){
+                    case "door_Pos":
+                      interactCmp.update();
+                      if(!openDoor){
+                        this.wallCollission();
+                      }
+                      break;
+
+                    case "stair_Pos":
+                      interactCmp.update();
+                      break;
+
+                    default:
+                      this.wallCollission();
+                      break;
                   }
                 }
-                else{
-                  this.wallCollission();
-                }
               }
-            }
           }
         }
       }
@@ -124,6 +132,19 @@ namespace Script {
       } else{
         allowWalkLeft = true;
         allowWalkRight = true;
+      }
+    }
+
+    yCollission(){
+      if(Math.abs(this.pos.x - this.obstacleCalcPos.x) < (this.obstacleLength/2) + 0.2){
+        if(Math.abs(this.pos.y - this.obstaclePos.y) < 1){
+          if(this.pos.y < this.obstaclePos.y) {
+            this.pos.y = this.obstaclePos.y;
+            this.characterPos.mtxLocal.translation = this.pos;
+            ySpeed = 0;
+            velocityY = 0;
+          }
+        }
       }
     }
 

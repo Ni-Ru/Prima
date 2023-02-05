@@ -7,6 +7,7 @@ namespace Script {
 
   let viewport: fc.Viewport;
   export let branch: fc.Node;
+  
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
   let characterCmp: CharacterComponent;

@@ -45,10 +45,13 @@ declare namespace Script {
         private obstacleMesh;
         private obstacleLength;
         private obstacleHeight;
+        private obstacleNodePos;
+        private obstacleCalcPos;
         hndEvent: (_event: Event) => void;
         update(deltaTime: number): void;
         checkCollission(): void;
         wallCollission(): void;
+        yCollission(): void;
     }
 }
 declare namespace Script {
@@ -72,4 +75,13 @@ declare namespace Script {
     let allowWalkLeft: boolean;
     let branch: fc.Node;
     let characterNode: fc.Node;
+}
+declare namespace Script {
+    import fc = FudgeCore;
+    class StairComponent extends fc.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        interaction(): void;
+    }
 }

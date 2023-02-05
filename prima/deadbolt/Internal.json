@@ -308,15 +308,70 @@
                   "name": "stairs",
                   "active": true,
                   "components": {},
-                  "children": []
-                }
-              },
-              {
-                "ƒ.Node": {
-                  "name": "cabinets",
-                  "active": true,
-                  "components": {},
-                  "children": []
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "stair_Pos",
+                        "active": true,
+                        "components": {
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[8, 3, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": [
+                          {
+                            "ƒ.GraphInstance": {
+                              "deserializeFromSource": true,
+                              "name": "Stair",
+                              "idSource": "Graph|2023-02-05T01:20:59.798Z|88819"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "stair_Pos",
+                        "active": true,
+                        "components": {
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[8, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": [
+                          {
+                            "ƒ.GraphInstance": {
+                              "deserializeFromSource": true,
+                              "name": "Stair",
+                              "idSource": "Graph|2023-02-05T01:20:59.798Z|88819"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -552,7 +607,7 @@
       "children": [
         {
           "ƒ.Node": {
-            "name": "Doortexture",
+            "name": "DoorTexture",
             "active": true,
             "components": {
               "ComponentMesh": [
@@ -608,6 +663,115 @@
         }
       ],
       "idResource": "Graph|2023-02-04T00:32:10.829Z|44980",
+      "type": "Graph"
+    }
+  },
+  "Graph|2023-02-05T01:20:59.798Z|88819": {
+    "ƒ.Graph": {
+      "name": "Stair",
+      "active": true,
+      "components": {
+        "ComponentMesh": [
+          {
+            "ƒ.ComponentMesh": {
+              "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+              "pivot": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[2.200000047683716, 2.200000047683716, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentMaterial": [
+          {
+            "ƒ.ComponentMaterial": {
+              "sortForAlpha": false,
+              "clrPrimary": "[0.8823529411764706, 1, 0, 0]",
+              "clrSecondary": "[1, 1, 1, 1]",
+              "pivot": {
+                "translation": "[0, 0]",
+                "rotation": 0,
+                "scaling": "[1, 1]"
+              },
+              "Component": {
+                "active": true
+              },
+              "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+            }
+          }
+        ],
+        "ComponentTransform": [
+          {
+            "ƒ.ComponentTransform": {
+              "local": {
+                "translation": "[0, 1, -0.019999999552965164]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[1, 1, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "InteractComponent": [
+          {
+            "Script.InteractComponent": {
+              "active": true,
+              "keyEPressed": false
+            }
+          }
+        ]
+      },
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "StairTexture",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                    "pivot": {
+                      "translation": "[0, 0, 0.009999999776482582]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[2, 2, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[0, 1, 0, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      ],
+      "idResource": "Graph|2023-02-05T01:20:59.798Z|88819",
       "type": "Graph"
     }
   }

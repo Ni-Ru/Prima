@@ -170,6 +170,8 @@ var Script;
         obstacleMesh;
         obstacleLength;
         obstacleHeight;
+        obstacleNodePos;
+        obstacleCalcPos;
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -196,7 +198,8 @@ var Script;
             let floors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
             let walls = Script.branch.getChildrenByName("environment")[0].getChildrenByName("walls")[0].getChildrenByName("wall_Pos");
             let doors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
-            let obstacles = [floors, walls, doors];
+            let stairs = Script.branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
+            let obstacles = [floors, walls, doors, stairs];
             this.pos = this.characterPos.mtxLocal.translation;
             for (let obstacleType of obstacles) {
                 for (let obstacle of obstacleType) {
@@ -205,35 +208,32 @@ var Script;
                     this.obstacleMesh = this.obstacleNode.getComponent(fc.ComponentMesh);
                     this.obstacleLength = this.obstacleMesh.mtxPivot.getX().x;
                     this.obstacleHeight = this.obstacleMesh.mtxPivot.getY().y;
-                    let obstacleNodePos = this.obstacleNode.mtxLocal.translation;
-                    let obstacleCalcPos = fc.Vector3.SUM(this.obstaclePos, obstacleNodePos);
-                    if (obstacle.name === "floor_Pos") {
-                        if (Math.abs(this.pos.x - obstacleCalcPos.x) < (this.obstacleLength / 2) + 0.2) {
-                            if (Math.abs(this.pos.y - this.obstaclePos.y) < 1) {
-                                if (this.pos.y < this.obstaclePos.y) {
-                                    this.pos.y = this.obstaclePos.y;
-                                    this.characterPos.mtxLocal.translation = this.pos;
-                                    ySpeed = 0;
-                                    velocityY = 0;
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        if (Math.abs(this.pos.y - obstacleCalcPos.y) <= (this.obstacleHeight / 2)) {
-                            if (Math.abs(this.pos.x - this.obstaclePos.x) < 2) {
-                                if (obstacle.name === "door_Pos") {
-                                    interactCmp = this.obstacleNode.getComponent(Script.InteractComponent);
-                                    interactCmp.update();
-                                    if (!Script.openDoor) {
-                                        this.wallCollission();
+                    this.obstacleNodePos = this.obstacleNode.mtxLocal.translation;
+                    this.obstacleCalcPos = fc.Vector3.SUM(this.obstaclePos, this.obstacleNodePos);
+                    interactCmp = this.obstacleNode.getComponent(Script.InteractComponent);
+                    switch (obstacle.name) {
+                        case "floor_Pos":
+                            this.yCollission();
+                            break;
+                        default:
+                            if (Math.abs(this.pos.y - this.obstacleCalcPos.y) <= (this.obstacleHeight / 2)) {
+                                if (Math.abs(this.pos.x - this.obstaclePos.x) < 2) {
+                                    switch (obstacle.name) {
+                                        case "door_Pos":
+                                            interactCmp.update();
+                                            if (!Script.openDoor) {
+                                                this.wallCollission();
+                                            }
+                                            break;
+                                        case "stair_Pos":
+                                            interactCmp.update();
+                                            break;
+                                        default:
+                                            this.wallCollission();
+                                            break;
                                     }
                                 }
-                                else {
-                                    this.wallCollission();
-                                }
                             }
-                        }
                     }
                 }
             }
@@ -254,6 +254,18 @@ var Script;
             else {
                 Script.allowWalkLeft = true;
                 Script.allowWalkRight = true;
+            }
+        }
+        yCollission() {
+            if (Math.abs(this.pos.x - this.obstacleCalcPos.x) < (this.obstacleLength / 2) + 0.2) {
+                if (Math.abs(this.pos.y - this.obstaclePos.y) < 1) {
+                    if (this.pos.y < this.obstaclePos.y) {
+                        this.pos.y = this.obstaclePos.y;
+                        this.characterPos.mtxLocal.translation = this.pos;
+                        ySpeed = 0;
+                        velocityY = 0;
+                    }
+                }
             }
         }
     }
@@ -304,7 +316,7 @@ var Script;
                         case "Door":
                             DoorCmp.interaction();
                             break;
-                        case "false":
+                        case "Stair":
                             Script.openDoor = true;
                             Script.allowWalkLeft = true;
                             Script.allowWalkRight = true;
@@ -376,5 +388,44 @@ var Script;
             characterCmp.walk(0);
         }
     }
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var fc = FudgeCore;
+    fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    class StairComponent extends fc.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = fc.Component.registerSubclass(StairComponent);
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (fc.Project.mode == fc.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* NODE_DESERIALIZED */:
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    break;
+            }
+        };
+        interaction() {
+            let stairs = Script.branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
+            for (let stair of stairs) {
+            }
+        }
+    }
+    Script.StairComponent = StairComponent;
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
