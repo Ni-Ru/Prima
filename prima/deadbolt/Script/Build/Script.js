@@ -4,6 +4,7 @@ var Script;
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     Script.xSpeed = 0;
+    Script.usedStairs = false;
     class CharacterComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(CharacterComponent);
@@ -221,7 +222,6 @@ var Script;
                             break;
                         default:
                             if ((Math.abs(this.pos.y - ((this.obstaclePos.y + 0.5) + ((this.obstacleHeight / 2) - 1)))) < (this.obstacleHeight / 2) + 0.5) {
-                                console.log(this.obstacleHeight);
                                 if (Math.abs(this.pos.x - this.obstaclePos.x) < 2) {
                                     switch (obstacle.name) {
                                         case "door_Pos":
@@ -323,12 +323,16 @@ var Script;
                             DoorCmp.interaction();
                             break;
                         case "Stair":
-                            StairCmp.interaction();
+                            if (!Script.usedStairs) {
+                                StairCmp.interaction();
+                                Script.usedStairs = true;
+                            }
                             break;
                     }
                 }
             }
             else {
+                Script.usedStairs = false;
                 this.keyEPressed = false;
             }
         }

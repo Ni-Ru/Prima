@@ -1,6 +1,7 @@
 declare namespace Script {
     import fc = FudgeCore;
     let xSpeed: number;
+    let usedStairs: boolean;
     class CharacterComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();

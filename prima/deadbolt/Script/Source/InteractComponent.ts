@@ -58,11 +58,15 @@ namespace Script {
               DoorCmp.interaction();
               break;
             case "Stair":
-              StairCmp.interaction();
+              if(!usedStairs){
+                StairCmp.interaction();
+                usedStairs = true;
+              }
               break;  
           }
         }
       } else {
+        usedStairs = false;
         this.keyEPressed = false;
       }
     }

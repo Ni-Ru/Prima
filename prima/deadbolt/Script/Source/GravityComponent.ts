@@ -96,7 +96,6 @@ namespace Script {
               break;
             default:
               if((Math.abs(this.pos.y - ((this.obstaclePos.y + 0.5) + ((this.obstacleHeight/2) -1) ))) < (this.obstacleHeight/2) +0.5){
-                console.log(this.obstacleHeight);
                 if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
                   switch(obstacle.name){
                     case "door_Pos":

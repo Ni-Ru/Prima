@@ -4,6 +4,9 @@ namespace Script {
 
   export let xSpeed = 0;
 
+  
+  export let usedStairs: boolean = false;
+
   export class CharacterComponent extends fc.ComponentScript {
 
     // Register the script as component for use in the editor via drag&drop
