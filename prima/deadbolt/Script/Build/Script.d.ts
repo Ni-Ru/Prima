@@ -9,6 +9,7 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
         update(deltaTime: number): void;
         walk(direction: number): void;
+        useStairs(exit: number): void;
     }
 }
 declare namespace Script {
@@ -74,6 +75,7 @@ declare namespace Script {
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
     let branch: fc.Node;
+    let characterCmp: CharacterComponent;
     let characterNode: fc.Node;
 }
 declare namespace Script {
@@ -81,7 +83,15 @@ declare namespace Script {
     class StairComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
+        private activeStairNodePos;
+        private activeStairPos;
+        private calcActiveStairPos;
+        private StairNodePos;
+        private StairNode;
+        private StairPos;
+        private calcStairPos;
         hndEvent: (_event: Event) => void;
         interaction(): void;
+        findDoor(): void;
     }
 }

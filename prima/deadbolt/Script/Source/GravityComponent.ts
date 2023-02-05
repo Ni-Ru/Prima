@@ -4,6 +4,7 @@ namespace Script {
   
   const gravity: number = -80;
 
+  let onGround: Boolean = false;
   let ySpeed: number = 0;
   let velocityY: number = 0;
 
@@ -63,8 +64,9 @@ namespace Script {
     update(deltaTime: number) {
       velocityY += gravity * deltaTime;
       ySpeed = velocityY * deltaTime;
-      this.characterPos.mtxLocal.translateY(ySpeed, true);
       this.checkCollission();
+      this.characterPos.mtxLocal.translateY(ySpeed, true);
+     
     }
 
     checkCollission(){
@@ -138,11 +140,11 @@ namespace Script {
     yCollission(){
       if(Math.abs(this.pos.x - this.obstacleCalcPos.x) < (this.obstacleLength/2) + 0.2){
         if(Math.abs(this.pos.y - this.obstaclePos.y) < 1){
-          if(this.pos.y < this.obstaclePos.y) {
-            this.pos.y = this.obstaclePos.y;
-            this.characterPos.mtxLocal.translation = this.pos;
+          if(this.pos.y <= this.obstaclePos.y) {
             ySpeed = 0;
             velocityY = 0;
+            this.pos.y = this.obstaclePos.y;
+            this.characterPos.mtxLocal.translation = this.pos;
           }
         }
       }

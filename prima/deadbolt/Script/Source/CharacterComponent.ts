@@ -52,6 +52,10 @@ namespace Script {
       xSpeed = walkSpeed * direction;
     }
 
+    useStairs(exit: number){
+      this.characterPos.mtxLocal.translateY(exit);
+    }
+
 
     // protected reduceMutator(_mutator: ƒ.Mutator): void {
     //   // delete properties that should not be mutated

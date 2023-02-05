@@ -725,6 +725,13 @@
               "keyEPressed": false
             }
           }
+        ],
+        "StairComponent": [
+          {
+            "Script.StairComponent": {
+              "active": true
+            }
+          }
         ]
       },
       "children": [

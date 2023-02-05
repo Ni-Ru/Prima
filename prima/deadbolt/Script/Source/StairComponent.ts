@@ -2,6 +2,8 @@ namespace Script {
   import fc = FudgeCore;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
+  let InteractCmp: InteractComponent;
+
   export class StairComponent extends fc.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number = fc.Component.registerSubclass(StairComponent);
@@ -21,6 +23,16 @@ namespace Script {
       this.addEventListener(fc.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
+    private activeStairNodePos: fc.Vector3;
+    private activeStairPos: fc.Vector3;
+    private calcActiveStairPos: fc.Vector3;
+
+    private StairNodePos: fc.Vector3;
+    private StairNode: fc.Node;
+    private StairPos: fc.Vector3;
+    private calcStairPos: fc.Vector3;
+
+
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
@@ -37,10 +49,30 @@ namespace Script {
     }
 
     interaction(){
-      let stairs: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
+      InteractCmp = this.node.getComponent(InteractComponent);
+      this.findDoor();
+    }
 
+    findDoor(){
+      this.activeStairNodePos = this.node.mtxLocal.translation;
+      this.activeStairPos = this.node.getParent().mtxLocal.translation;
+      this.calcActiveStairPos = fc.Vector3.SUM(this.activeStairNodePos, this.activeStairPos);
+
+      let stairs: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
+      
       for (let stair of stairs){
-        
+        this.StairPos = stair.mtxLocal.translation;
+        this.StairNode = stair.getChild(0);
+        this.StairNodePos = this.StairNode.mtxLocal.translation;
+        this.calcStairPos = fc.Vector3.SUM(this.StairNodePos, this.StairPos);
+  
+        if(Math.abs(this.calcStairPos.x - this.calcActiveStairPos.x) < 1){
+          if(Math.abs(this.calcStairPos.y - this.calcActiveStairPos.y) > 1){
+            console.log(this.calcStairPos.y - this.calcActiveStairPos.y);
+            characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y);
+            InteractCmp.noInteract();
+          }
+        }
       }
     }
 

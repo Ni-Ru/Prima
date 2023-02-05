@@ -41,6 +41,9 @@ var Script;
         walk(direction) {
             Script.xSpeed = Script.walkSpeed * direction;
         }
+        useStairs(exit) {
+            this.characterPos.mtxLocal.translateY(exit);
+        }
     }
     Script.CharacterComponent = CharacterComponent;
 })(Script || (Script = {}));
@@ -147,6 +150,7 @@ var Script;
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     const gravity = -80;
+    let onGround = false;
     let ySpeed = 0;
     let velocityY = 0;
     let interactCmp;
@@ -191,8 +195,8 @@ var Script;
         update(deltaTime) {
             velocityY += gravity * deltaTime;
             ySpeed = velocityY * deltaTime;
-            this.characterPos.mtxLocal.translateY(ySpeed, true);
             this.checkCollission();
+            this.characterPos.mtxLocal.translateY(ySpeed, true);
         }
         checkCollission() {
             let floors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
@@ -259,11 +263,11 @@ var Script;
         yCollission() {
             if (Math.abs(this.pos.x - this.obstacleCalcPos.x) < (this.obstacleLength / 2) + 0.2) {
                 if (Math.abs(this.pos.y - this.obstaclePos.y) < 1) {
-                    if (this.pos.y < this.obstaclePos.y) {
-                        this.pos.y = this.obstaclePos.y;
-                        this.characterPos.mtxLocal.translation = this.pos;
+                    if (this.pos.y <= this.obstaclePos.y) {
                         ySpeed = 0;
                         velocityY = 0;
+                        this.pos.y = this.obstaclePos.y;
+                        this.characterPos.mtxLocal.translation = this.pos;
                     }
                 }
             }
@@ -276,6 +280,7 @@ var Script;
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     let DoorCmp;
+    let StairCmp;
     class InteractComponent extends fc.ComponentScript {
         static iSubclass = fc.Component.registerSubclass(InteractComponent);
         constructor() {
@@ -288,7 +293,7 @@ var Script;
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
         }
-        keyEPressed = false;
+        keyEPressed = true;
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -305,10 +310,10 @@ var Script;
         };
         update() {
             this.checkPlayerPos();
-            console.log(this.node.name);
         }
         actionControls() {
             DoorCmp = this.node.getComponent(Script.DoorComponent);
+            StairCmp = this.node.getComponent(Script.StairComponent);
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])) {
                 if (!this.keyEPressed) {
                     this.keyEPressed = true;
@@ -317,9 +322,7 @@ var Script;
                             DoorCmp.interaction();
                             break;
                         case "Stair":
-                            Script.openDoor = true;
-                            Script.allowWalkLeft = true;
-                            Script.allowWalkRight = true;
+                            StairCmp.interaction();
                             break;
                     }
                 }
@@ -356,36 +359,35 @@ var Script;
     Script.allowWalkLeft = true;
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
-    let characterCmp;
     let gravityCmp;
     function start(_event) {
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
         Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
-        characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
+        Script.characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
         gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fc.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         let deltaTime = fc.Loop.timeFrameGame / 1000;
-        characterCmp.update(deltaTime);
+        Script.characterCmp.update(deltaTime);
         gravityCmp.update(deltaTime);
         // ƒ.Physics.simulate();  // if physics is included and used
         viewport.draw();
         fc.AudioManager.default.update();
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
             if (Script.allowWalkRight) {
-                characterCmp.walk(1);
+                Script.characterCmp.walk(1);
             }
         }
         else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])) {
             if (Script.allowWalkLeft) {
-                characterCmp.walk(-1);
+                Script.characterCmp.walk(-1);
             }
         }
         else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
-            characterCmp.walk(0);
+            Script.characterCmp.walk(0);
         }
     }
 })(Script || (Script = {}));
@@ -393,6 +395,7 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    let InteractCmp;
     class StairComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(StairComponent);
@@ -406,6 +409,13 @@ var Script;
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
         }
+        activeStairNodePos;
+        activeStairPos;
+        calcActiveStairPos;
+        StairNodePos;
+        StairNode;
+        StairPos;
+        calcStairPos;
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -421,8 +431,26 @@ var Script;
             }
         };
         interaction() {
+            InteractCmp = this.node.getComponent(Script.InteractComponent);
+            this.findDoor();
+        }
+        findDoor() {
+            this.activeStairNodePos = this.node.mtxLocal.translation;
+            this.activeStairPos = this.node.getParent().mtxLocal.translation;
+            this.calcActiveStairPos = fc.Vector3.SUM(this.activeStairNodePos, this.activeStairPos);
             let stairs = Script.branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
             for (let stair of stairs) {
+                this.StairPos = stair.mtxLocal.translation;
+                this.StairNode = stair.getChild(0);
+                this.StairNodePos = this.StairNode.mtxLocal.translation;
+                this.calcStairPos = fc.Vector3.SUM(this.StairNodePos, this.StairPos);
+                if (Math.abs(this.calcStairPos.x - this.calcActiveStairPos.x) < 1) {
+                    if (Math.abs(this.calcStairPos.y - this.calcActiveStairPos.y) > 1) {
+                        console.log(this.calcStairPos.y - this.calcActiveStairPos.y);
+                        Script.characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y);
+                        InteractCmp.noInteract();
+                    }
+                }
             }
         }
     }

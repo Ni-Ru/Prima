@@ -3,6 +3,7 @@ namespace Script {
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
   let DoorCmp: DoorComponent;
+  let StairCmp: StairComponent;
 
 
   export class InteractComponent extends fc.ComponentScript {
@@ -23,7 +24,7 @@ namespace Script {
       this.addEventListener(fc.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
-    private keyEPressed: boolean = false;
+    private keyEPressed: boolean = true;
 
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
@@ -43,11 +44,11 @@ namespace Script {
 
     update() {
       this.checkPlayerPos();
-      console.log(this.node.name)
     }
 
     actionControls(){
       DoorCmp = this.node.getComponent(DoorComponent);
+      StairCmp = this.node.getComponent(StairComponent);
 
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])){
         if(!this.keyEPressed) {
@@ -57,9 +58,7 @@ namespace Script {
               DoorCmp.interaction();
               break;
             case "Stair":
-              openDoor = true;
-              allowWalkLeft = true;
-              allowWalkRight = true;
+              StairCmp.interaction();
               break;  
           }
         }

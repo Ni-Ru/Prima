@@ -10,7 +10,7 @@ namespace Script {
   
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
-  let characterCmp: CharacterComponent;
+  export let characterCmp: CharacterComponent;
   let gravityCmp: GravityComponent;
   export let characterNode: fc.Node;
 
