@@ -461,4 +461,11 @@ var Script;
     }
     Script.StairComponent = StairComponent;
 })(Script || (Script = {}));
+var script;
+(function (script) {
+    var fAid = FudgeAid;
+    class Throwable extends fAid.NodeSprite {
+    }
+    script.Throwable = Throwable;
+})(script || (script = {}));
 //# sourceMappingURL=Script.js.map

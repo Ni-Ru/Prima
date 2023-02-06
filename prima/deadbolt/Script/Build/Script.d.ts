@@ -96,3 +96,8 @@ declare namespace Script {
         findDoor(): void;
     }
 }
+declare namespace script {
+    import fAid = FudgeAid;
+    class Throwable extends fAid.NodeSprite {
+    }
+}
