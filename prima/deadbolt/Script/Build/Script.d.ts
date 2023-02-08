@@ -11,9 +11,8 @@ declare namespace Script {
         update(deltaTime: number): void;
         walk(direction: number): void;
         useStairs(exit: number): void;
-        hndThrow(e: MouseEvent): void;
         changeWeapon(): void;
-        stoneAmount(stones: number): void;
+        hndThrow(e: MouseEvent): void;
     }
 }
 declare namespace Script {
@@ -43,6 +42,7 @@ declare namespace Script {
         protected reduceMutator(_Mutator: f.Mutator): void;
         stones: number;
         private controller;
+        stoneAmount(stones: number, reset: boolean): void;
         constructor(_config: {
             [key: string]: number;
         });
@@ -115,7 +115,6 @@ declare namespace Script {
 declare namespace Script {
     import fAid = FudgeAid;
     class StoneNode extends fAid.NodeSprite {
-        inInventory: boolean;
         constructor();
     }
 }

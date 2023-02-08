@@ -61,13 +61,6 @@ namespace Script {
       this.characterPos.mtxLocal.translateY(exit);
     }
 
-    hndThrow(e: MouseEvent): void{
-      console.log(e);
-      if(weapon === "stones"){
-        branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(new StoneNode());
-      }
-
-    }
 
     changeWeapon(){
       if(weapon === "knife"){
@@ -83,12 +76,15 @@ namespace Script {
       }
     }
 
-    stoneAmount(stones: number){
-      for (let i = 0; i < stones; i++){
-        let stoneImg = document.createElement("IMG");
-        stoneImg.setAttribute("src", "./imgs/stone.gif");
-        document.getElementById("stoneImgs").appendChild(stoneImg);
+    hndThrow(e: MouseEvent): void{
+      if(weapon === "stones" && gameState.stones > 0){
+        console.log(e);
+        let newStone = new StoneNode()
+        branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(newStone);
+        gameState.stones -= 1;
+        gameState.stoneAmount(gameState.stones, true);
       }
+
     }
 
 

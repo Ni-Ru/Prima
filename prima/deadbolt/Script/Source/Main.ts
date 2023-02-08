@@ -16,31 +16,45 @@ namespace Script {
 
   export let allowWalkRight: boolean = true;
   export let allowWalkLeft: boolean = true;
+  let config: {[key: string]: number};
   export let vctMouse: fc.Vector2 = fc.Vector2.ZERO()
 
   let spacePressed: boolean = false;
 
   document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
 
-  async function start(_event: CustomEvent): Promise<void> {
+   function start(_event: CustomEvent) {
+    fetchData()
+    setup(_event);
+    fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, update);
+    fc.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+  }
+
+  async function fetchData(): Promise<void>{
     let response: Response = await fetch("config.json");
-    let config: {[key: string]: number} = await response.json();
+    config = await response.json();
+
     gameState = new GameState(config)
+    gameState.stoneAmount(gameState.stones, false);
+  }
+
+   function setup(_event: CustomEvent){
+
     viewport = _event.detail;
     branch = viewport.getBranch();
 
     characterNode = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
+
     characterCmp = characterNode.getComponent(CharacterComponent);
     gravityCmp = characterNode.getComponent(GravityComponent);
+
     cmpCamera = viewport.camera;
     cmpCamera.mtxPivot.rotateY(180);
     cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
-    characterCmp.stoneAmount(gameState.stones);
 
     window.addEventListener("click", characterCmp.hndThrow);
     window.addEventListener("mousemove", hndMouse);
-    fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, update);
-    fc.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+
   }
 
   function update(_event: Event): void {

@@ -46,12 +46,6 @@ var Script;
         useStairs(exit) {
             this.characterPos.mtxLocal.translateY(exit);
         }
-        hndThrow(e) {
-            console.log(e);
-            if (weapon === "stones") {
-                Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(new Script.StoneNode());
-            }
-        }
         changeWeapon() {
             if (weapon === "knife") {
                 weapon = "stones";
@@ -66,11 +60,13 @@ var Script;
                 document.getElementById("knife").setAttribute("class", "selected");
             }
         }
-        stoneAmount(stones) {
-            for (let i = 0; i < stones; i++) {
-                let stoneImg = document.createElement("IMG");
-                stoneImg.setAttribute("src", "./imgs/stone.gif");
-                document.getElementById("stoneImgs").appendChild(stoneImg);
+        hndThrow(e) {
+            if (weapon === "stones" && Script.gameState.stones > 0) {
+                console.log(e);
+                let newStone = new Script.StoneNode();
+                Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(newStone);
+                Script.gameState.stones -= 1;
+                Script.gameState.stoneAmount(Script.gameState.stones, true);
             }
         }
     }
@@ -182,6 +178,16 @@ var Script;
         reduceMutator(_Mutator) { }
         stones;
         controller;
+        stoneAmount(stones, reset) {
+            if (reset) {
+                document.getElementById("stoneImgs").innerHTML = "";
+            }
+            for (let i = 0; i < stones; i++) {
+                let stoneImg = document.createElement("IMG");
+                stoneImg.setAttribute("src", "./imgs/stone.gif");
+                document.getElementById("stoneImgs").appendChild(stoneImg);
+            }
+        }
         constructor(_config) {
             super();
             this.stones = _config.stones;
@@ -409,13 +415,23 @@ var Script;
     Script.walkSpeed = 3;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
+    let config;
     Script.vctMouse = fc.Vector2.ZERO();
     let spacePressed = false;
     document.addEventListener("interactiveViewportStarted", start);
-    async function start(_event) {
+    function start(_event) {
+        fetchData();
+        setup(_event);
+        fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
+        fc.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+    }
+    async function fetchData() {
         let response = await fetch("config.json");
-        let config = await response.json();
+        config = await response.json();
         Script.gameState = new Script.GameState(config);
+        Script.gameState.stoneAmount(Script.gameState.stones, false);
+    }
+    function setup(_event) {
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
         Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
@@ -424,11 +440,8 @@ var Script;
         cmpCamera = viewport.camera;
         cmpCamera.mtxPivot.rotateY(180);
         cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
-        Script.characterCmp.stoneAmount(Script.gameState.stones);
         window.addEventListener("click", Script.characterCmp.hndThrow);
         window.addEventListener("mousemove", hndMouse);
-        fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        fc.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         let deltaTime = fc.Loop.timeFrameGame / 1000;
@@ -544,7 +557,6 @@ var Script;
     var fAid = FudgeAid;
     var fc = FudgeCore;
     class StoneNode extends fAid.NodeSprite {
-        inInventory;
         constructor() {
             super("stone");
             let Material = new fc.Material("stoneMat", fc.ShaderLitTextured);

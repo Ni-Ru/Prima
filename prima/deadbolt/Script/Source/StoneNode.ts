@@ -6,8 +6,6 @@ namespace Script {
 
     export class StoneNode extends fAid.NodeSprite {
 
-        inInventory: boolean;
-
 
         constructor() {
             super("stone");
