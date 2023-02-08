@@ -413,6 +413,14 @@
                     }
                   ]
                 }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "items",
+                  "active": true,
+                  "components": {},
+                  "children": []
+                }
               }
             ]
           }

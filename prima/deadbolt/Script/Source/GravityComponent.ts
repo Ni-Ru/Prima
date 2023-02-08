@@ -4,7 +4,6 @@ namespace Script {
   
   const gravity: number = -80;
 
-  let onGround: Boolean = false;
   let ySpeed: number = 0;
   let velocityY: number = 0;
 

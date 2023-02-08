@@ -11,6 +11,9 @@ declare namespace Script {
         update(deltaTime: number): void;
         walk(direction: number): void;
         useStairs(exit: number): void;
+        hndThrow(e: MouseEvent): void;
+        changeWeapon(): void;
+        stoneAmount(stones: number): void;
     }
 }
 declare namespace Script {
@@ -32,6 +35,17 @@ declare namespace Script {
         interaction(): void;
         openDoor(): void;
         closeDoor(): void;
+    }
+}
+declare namespace Script {
+    import f = FudgeCore;
+    class GameState extends f.Mutable {
+        protected reduceMutator(_Mutator: f.Mutator): void;
+        stones: number;
+        private controller;
+        constructor(_config: {
+            [key: string]: number;
+        });
     }
 }
 declare namespace Script {
@@ -72,12 +86,14 @@ declare namespace Script {
 }
 declare namespace Script {
     import fc = FudgeCore;
+    let characterCmp: CharacterComponent;
+    let branch: fc.Node;
+    let characterNode: fc.Node;
+    let gameState: GameState;
     const walkSpeed: number;
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
-    let branch: fc.Node;
-    let characterCmp: CharacterComponent;
-    let characterNode: fc.Node;
+    let vctMouse: fc.Vector2;
 }
 declare namespace Script {
     import fc = FudgeCore;
@@ -96,8 +112,10 @@ declare namespace Script {
         findDoor(): void;
     }
 }
-declare namespace script {
+declare namespace Script {
     import fAid = FudgeAid;
-    class Throwable extends fAid.NodeSprite {
+    class StoneNode extends fAid.NodeSprite {
+        inInventory: boolean;
+        constructor();
     }
 }

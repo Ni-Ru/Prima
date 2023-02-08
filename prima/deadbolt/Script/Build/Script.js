@@ -5,6 +5,7 @@ var Script;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     Script.xSpeed = 0;
     Script.usedStairs = false;
+    let weapon = "knife";
     class CharacterComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(CharacterComponent);
@@ -44,6 +45,33 @@ var Script;
         }
         useStairs(exit) {
             this.characterPos.mtxLocal.translateY(exit);
+        }
+        hndThrow(e) {
+            console.log(e);
+            if (weapon === "stones") {
+                Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(new Script.StoneNode());
+            }
+        }
+        changeWeapon() {
+            if (weapon === "knife") {
+                weapon = "stones";
+                document.getElementById("knife").removeAttribute("class");
+                document.getElementById("stones").setAttribute("class", "selected");
+                document.getElementById("stoneImgs").setAttribute("class", "selected");
+            }
+            else {
+                weapon = "knife";
+                document.getElementById("stones").removeAttribute("class");
+                document.getElementById("stoneImgs").removeAttribute("class");
+                document.getElementById("knife").setAttribute("class", "selected");
+            }
+        }
+        stoneAmount(stones) {
+            for (let i = 0; i < stones; i++) {
+                let stoneImg = document.createElement("IMG");
+                stoneImg.setAttribute("src", "./imgs/stone.gif");
+                document.getElementById("stoneImgs").appendChild(stoneImg);
+            }
         }
     }
     Script.CharacterComponent = CharacterComponent;
@@ -148,10 +176,26 @@ var Script;
 })(Script || (Script = {}));
 var Script;
 (function (Script) {
+    var f = FudgeCore;
+    var fui = FudgeUserInterface;
+    class GameState extends f.Mutable {
+        reduceMutator(_Mutator) { }
+        stones;
+        controller;
+        constructor(_config) {
+            super();
+            this.stones = _config.stones;
+            this.controller = new fui.Controller(this, document.getElementById("vui"));
+            console.log(this.controller);
+        }
+    }
+    Script.GameState = GameState;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     const gravity = -80;
-    let onGround = false;
     let ySpeed = 0;
     let velocityY = 0;
     let interactCmp;
@@ -359,18 +403,30 @@ var Script;
 var Script;
 (function (Script) {
     var fc = FudgeCore;
+    let viewport;
+    let cmpCamera;
+    let gravityCmp;
     Script.walkSpeed = 3;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
-    let viewport;
+    Script.vctMouse = fc.Vector2.ZERO();
+    let spacePressed = false;
     document.addEventListener("interactiveViewportStarted", start);
-    let gravityCmp;
-    function start(_event) {
+    async function start(_event) {
+        let response = await fetch("config.json");
+        let config = await response.json();
+        Script.gameState = new Script.GameState(config);
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
         Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
         Script.characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
         gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
+        cmpCamera = viewport.camera;
+        cmpCamera.mtxPivot.rotateY(180);
+        cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
+        Script.characterCmp.stoneAmount(Script.gameState.stones);
+        window.addEventListener("click", Script.characterCmp.hndThrow);
+        window.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fc.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
@@ -378,9 +434,17 @@ var Script;
         let deltaTime = fc.Loop.timeFrameGame / 1000;
         Script.characterCmp.update(deltaTime);
         gravityCmp.update(deltaTime);
+        controls();
         // ƒ.Physics.simulate();  // if physics is included and used
         viewport.draw();
+        updateCamera();
         fc.AudioManager.default.update();
+    }
+    function hndMouse(e) {
+        Script.vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
+        Script.vctMouse.y = 2 * (e.clientY / window.innerHeight) - 1;
+    }
+    function controls() {
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
             if (Script.allowWalkRight) {
                 Script.characterCmp.walk(1);
@@ -394,6 +458,20 @@ var Script;
         else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
             Script.characterCmp.walk(0);
         }
+        if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])) {
+            if (!spacePressed) {
+                spacePressed = true;
+                Script.characterCmp.changeWeapon();
+            }
+        }
+        else {
+            spacePressed = false;
+        }
+    }
+    function updateCamera() {
+        let pos = Script.characterNode.getParent().mtxLocal.translation;
+        let origin = cmpCamera.mtxPivot.translation;
+        cmpCamera.mtxPivot.translation = new fc.Vector3(pos.x, pos.y, origin.z);
     }
 })(Script || (Script = {}));
 var Script;
@@ -461,11 +539,33 @@ var Script;
     }
     Script.StairComponent = StairComponent;
 })(Script || (Script = {}));
-var script;
-(function (script) {
+var Script;
+(function (Script) {
     var fAid = FudgeAid;
-    class Throwable extends fAid.NodeSprite {
+    var fc = FudgeCore;
+    class StoneNode extends fAid.NodeSprite {
+        inInventory;
+        constructor() {
+            super("stone");
+            let Material = new fc.Material("stoneMat", fc.ShaderLitTextured);
+            let StoneImage = new fc.TextureImage();
+            StoneImage.load("./imgs/stone.gif");
+            let stoneCoat = new fc.CoatTextured(undefined, StoneImage);
+            Material.coat = stoneCoat;
+            let stoneTransform = new fc.ComponentTransform();
+            this.addComponent(stoneTransform);
+            let stoneRigid = new fc.ComponentRigidbody(2, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
+            this.addComponent(stoneRigid);
+            let characterPos = Script.characterNode.getParent().mtxWorld.translation;
+            let scaleVec = new fc.Vector3(0.4, 0.3, 0.5);
+            stoneTransform.mtxLocal.scale(scaleVec);
+            stoneTransform.mtxLocal.translate(characterPos);
+            console.log(characterPos);
+            let cmpMat = this.getComponent(fc.ComponentMaterial);
+            cmpMat.material = Material;
+            new fc.CoatTextured();
+        }
     }
-    script.Throwable = Throwable;
-})(script || (script = {}));
+    Script.StoneNode = StoneNode;
+})(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map

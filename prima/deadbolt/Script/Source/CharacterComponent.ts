@@ -6,6 +6,8 @@ namespace Script {
 
   
   export let usedStairs: boolean = false;
+  
+  let weapon: String = "knife";
 
   export class CharacterComponent extends fc.ComponentScript {
 
@@ -57,6 +59,36 @@ namespace Script {
 
     useStairs(exit: number){
       this.characterPos.mtxLocal.translateY(exit);
+    }
+
+    hndThrow(e: MouseEvent): void{
+      console.log(e);
+      if(weapon === "stones"){
+        branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(new StoneNode());
+      }
+
+    }
+
+    changeWeapon(){
+      if(weapon === "knife"){
+        weapon = "stones";
+        document.getElementById("knife").removeAttribute("class");
+        document.getElementById("stones").setAttribute("class", "selected");
+        document.getElementById("stoneImgs").setAttribute("class", "selected");
+      }else{
+        weapon = "knife";
+        document.getElementById("stones").removeAttribute("class");
+        document.getElementById("stoneImgs").removeAttribute("class");
+        document.getElementById("knife").setAttribute("class", "selected");
+      }
+    }
+
+    stoneAmount(stones: number){
+      for (let i = 0; i < stones; i++){
+        let stoneImg = document.createElement("IMG");
+        stoneImg.setAttribute("src", "./imgs/stone.gif");
+        document.getElementById("stoneImgs").appendChild(stoneImg);
+      }
     }
 
 

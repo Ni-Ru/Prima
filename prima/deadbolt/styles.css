@@ -14,3 +14,37 @@ canvas.fullscreen {
   width: 100vw; 
   height: 100vh; 
 }
+
+#vui{
+  position:absolute;
+  z-index: 0;
+  top: 10px;
+  left: 30px;
+  color:black;
+}
+
+#knife{
+  margin-bottom: 20px;
+}
+
+img{
+  opacity: 0.5;
+  width: 150px;
+}
+
+.selected>img{
+  opacity: 1;
+}
+
+#stoneImgs{
+  color:white;
+}
+
+#stoneImgs{
+  width:150px;
+  display: flex;
+}
+
+#stoneImgs>img{
+  width:33%;
+}
