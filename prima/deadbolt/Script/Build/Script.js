@@ -5,7 +5,7 @@ var Script;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     Script.xSpeed = 0;
     Script.usedStairs = false;
-    let weapon = "knife";
+    Script.weapon = "knife";
     class CharacterComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(CharacterComponent);
@@ -47,21 +47,22 @@ var Script;
             this.characterPos.mtxLocal.translateY(exit);
         }
         changeWeapon() {
-            if (weapon === "knife") {
-                weapon = "stones";
+            if (Script.weapon === "knife") {
+                Script.weapon = "stones";
                 document.getElementById("knife").removeAttribute("class");
                 document.getElementById("stones").setAttribute("class", "selected");
                 document.getElementById("stoneImgs").setAttribute("class", "selected");
             }
             else {
-                weapon = "knife";
+                Script.weapon = "knife";
                 document.getElementById("stones").removeAttribute("class");
                 document.getElementById("stoneImgs").removeAttribute("class");
                 document.getElementById("knife").setAttribute("class", "selected");
             }
         }
         hndThrow(e) {
-            if (weapon === "stones" && Script.gameState.stones > 0) {
+            console.log("clicked");
+            if (Script.weapon === "stones" && Script.gameState.stones > 0) {
                 console.log(e);
                 let newStone = new Script.StoneNode();
                 Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(newStone);
@@ -440,7 +441,15 @@ var Script;
         cmpCamera = viewport.camera;
         cmpCamera.mtxPivot.rotateY(180);
         cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
-        window.addEventListener("click", Script.characterCmp.hndThrow);
+        window.addEventListener("mousedown", hndAim);
+        window.addEventListener("mouseup", (e) => {
+            if (e.button === 2) {
+                document.body.style.cursor = "default";
+            }
+        });
+        window.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        });
         window.addEventListener("mousemove", hndMouse);
     }
     function update(_event) {
@@ -452,6 +461,16 @@ var Script;
         viewport.draw();
         updateCamera();
         fc.AudioManager.default.update();
+    }
+    function hndAim(e) {
+        if (Script.weapon === "stones") {
+            if (e.button === 2) {
+                e.preventDefault();
+                document.body.style.cursor = "crosshair";
+                console.log("click now");
+                window.addEventListener("click", (clickEvent) => Script.characterCmp.hndThrow(clickEvent));
+            }
+        }
     }
     function hndMouse(e) {
         Script.vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;

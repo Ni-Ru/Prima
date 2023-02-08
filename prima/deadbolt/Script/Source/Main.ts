@@ -52,7 +52,15 @@ namespace Script {
     cmpCamera.mtxPivot.rotateY(180);
     cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
 
-    window.addEventListener("click", characterCmp.hndThrow);
+    window.addEventListener("mousedown", hndAim);
+    window.addEventListener("mouseup", (e) => {
+      if (e.button === 2){
+        document.body.style.cursor = "default";
+      }
+    });
+    window.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
     window.addEventListener("mousemove", hndMouse);
 
   }
@@ -68,6 +76,16 @@ namespace Script {
     fc.AudioManager.default.update();
   }
 
+  function hndAim(e: MouseEvent): void{
+    if(weapon === "stones"){ 
+      if(e.button === 2){
+        e.preventDefault();
+        document.body.style.cursor ="crosshair";
+        console.log("click now")
+        window.addEventListener("click", (clickEvent) => characterCmp.hndThrow(clickEvent));
+      }
+    }
+  }
 
   function hndMouse(e: MouseEvent): void{
     vctMouse.x = 2 * (e.clientX / window.innerWidth) -1;

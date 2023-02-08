@@ -7,7 +7,7 @@ namespace Script {
   
   export let usedStairs: boolean = false;
   
-  let weapon: String = "knife";
+  export let weapon: String = "knife";
 
   export class CharacterComponent extends fc.ComponentScript {
 
@@ -77,6 +77,7 @@ namespace Script {
     }
 
     hndThrow(e: MouseEvent): void{
+      console.log("clicked")
       if(weapon === "stones" && gameState.stones > 0){
         console.log(e);
         let newStone = new StoneNode()
