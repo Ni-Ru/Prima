@@ -13,11 +13,11 @@ namespace Script {
   export let gameState: GameState;
 
   export const walkSpeed: number = 3;
+  let deltaTime: number;
 
   export let allowWalkRight: boolean = true;
   export let allowWalkLeft: boolean = true;
   let config: {[key: string]: number};
-  export let vctMouse: fc.Vector2 = fc.Vector2.ZERO()
 
   let spacePressed: boolean = false;
 
@@ -43,6 +43,10 @@ namespace Script {
     viewport = _event.detail;
     branch = viewport.getBranch();
 
+    branch.addEventListener("playSound", hndPlaySound);
+
+    branch.addComponent(new fc.ComponentAudio());
+
     characterNode = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
 
     characterCmp = characterNode.getComponent(CharacterComponent);
@@ -61,38 +65,43 @@ namespace Script {
     window.addEventListener("contextmenu", (e) => {
       e.preventDefault();
     });
-    window.addEventListener("mousemove", hndMouse);
 
   }
 
   function update(_event: Event): void {
-    let deltaTime: number = fc.Loop.timeFrameGame / 1000;
+    deltaTime = fc.Loop.timeFrameGame / 1000;
     characterCmp.update(deltaTime)
     gravityCmp.update(deltaTime)
     controls();
-    // ƒ.Physics.simulate();  // if physics is included and used
+    fc.Physics.simulate();  // if physics is included and used
     viewport.draw();
     updateCamera();
     fc.AudioManager.default.update();
   }
 
+
+  function hndPlaySound(e: Event): void{
+    e.currentTarget;
+    let audioComp: fc.ComponentAudio = branch.getComponent(fc.ComponentAudio);
+    let inventorySound: fc.Audio = new fc.Audio("./sounds/cloth-inventory.wav");
+    let stoneSound: fc.Audio = new fc.Audio("./sounds/stone.mp3");
+    if(e.target == characterNode){
+      audioComp.setAudio(inventorySound);
+    }else{
+      audioComp.setAudio(stoneSound);
+    }
+      audioComp.play(true);
+      audioComp.volume = 0.5;
+  }
+
   function hndAim(e: MouseEvent): void{
     if(weapon === "stones"){ 
       if(e.button === 2){
-        e.preventDefault();
         document.body.style.cursor ="crosshair";
-        console.log("click now")
-        window.addEventListener("click", (clickEvent) => characterCmp.hndThrow(clickEvent));
+        window.addEventListener("click",characterCmp.hndThrow);
       }
     }
   }
-
-  function hndMouse(e: MouseEvent): void{
-    vctMouse.x = 2 * (e.clientX / window.innerWidth) -1;
-    vctMouse.y = 2 * (e.clientY / window.innerHeight) -1;
-  }
-
-
 
   function controls(){
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])){

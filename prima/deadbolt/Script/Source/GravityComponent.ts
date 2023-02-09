@@ -64,7 +64,7 @@ namespace Script {
       velocityY += gravity * deltaTime;
       ySpeed = velocityY * deltaTime;
       this.checkCollission();
-      this.characterPos.mtxLocal.translateY(ySpeed, true);
+      this.node.getParent().mtxLocal.translateY(ySpeed, true);
      
     }
 
@@ -76,7 +76,8 @@ namespace Script {
       let stairs: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
 
       let obstacles = [floors, walls, doors, stairs];
-      this.pos = this.characterPos.mtxLocal.translation;
+      this.pos = this.node.getParent().mtxLocal.translation;
+      
       for (let obstacleType of obstacles){
         for (let obstacle of obstacleType) {
 
@@ -143,7 +144,7 @@ namespace Script {
             ySpeed = 0;
             velocityY = 0;
             this.pos.y = this.obstaclePos.y;
-            this.characterPos.mtxLocal.translation = this.pos;
+            this.node.getParent().mtxLocal.translation = this.pos;
           }
         }
       }

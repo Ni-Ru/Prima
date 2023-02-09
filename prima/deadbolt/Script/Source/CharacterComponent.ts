@@ -32,6 +32,7 @@ namespace Script {
     public walkSpeed: number = 0;
     private characterPos: fc.Node;
 
+
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
@@ -42,8 +43,8 @@ namespace Script {
           this.removeEventListener(fc.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case fc.EVENT.NODE_DESERIALIZED:
-          
-        this.characterPos = this.node.getParent();
+          this.characterPos = this.node.getParent();
+
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
       }
@@ -63,6 +64,7 @@ namespace Script {
 
 
     changeWeapon(){
+      this.node.dispatchEvent(new Event("playSound", {bubbles: true}));
       if(weapon === "knife"){
         weapon = "stones";
         document.getElementById("knife").removeAttribute("class");
@@ -77,11 +79,13 @@ namespace Script {
     }
 
     hndThrow(e: MouseEvent): void{
-      console.log("clicked")
       if(weapon === "stones" && gameState.stones > 0){
-        console.log(e);
-        let newStone = new StoneNode()
-        branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(newStone);
+        let vctMouse: fc.Vector2 = new fc.Vector2();
+        vctMouse.x = 2 * (e.clientX / window.innerWidth) -1;
+        vctMouse.y = 2 * (e.clientY / window.innerHeight) -1;
+        let newStone = new StoneNode(vctMouse)
+        let items: fc.Node = branch.getChildrenByName("environment")[0].getChildrenByName("items")[0];
+        items.addChild(newStone);
         gameState.stones -= 1;
         gameState.stoneAmount(gameState.stones, true);
       }

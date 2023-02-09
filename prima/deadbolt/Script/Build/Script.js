@@ -47,6 +47,7 @@ var Script;
             this.characterPos.mtxLocal.translateY(exit);
         }
         changeWeapon() {
+            this.node.dispatchEvent(new Event("playSound", { bubbles: true }));
             if (Script.weapon === "knife") {
                 Script.weapon = "stones";
                 document.getElementById("knife").removeAttribute("class");
@@ -61,11 +62,13 @@ var Script;
             }
         }
         hndThrow(e) {
-            console.log("clicked");
             if (Script.weapon === "stones" && Script.gameState.stones > 0) {
-                console.log(e);
-                let newStone = new Script.StoneNode();
-                Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0].addChild(newStone);
+                let vctMouse = new fc.Vector2();
+                vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
+                vctMouse.y = 2 * (e.clientY / window.innerHeight) - 1;
+                let newStone = new Script.StoneNode(vctMouse);
+                let items = Script.branch.getChildrenByName("environment")[0].getChildrenByName("items")[0];
+                items.addChild(newStone);
                 Script.gameState.stones -= 1;
                 Script.gameState.stoneAmount(Script.gameState.stones, true);
             }
@@ -171,6 +174,112 @@ var Script;
     }
     Script.DoorComponent = DoorComponent;
 })(Script || (Script = {}));
+// namespace Script {
+//     import ƒ = FudgeCore;
+//     import ƒAid = FudgeAid;
+//     enum JOB {
+//       IDLE, ATTACK
+//     }
+//     export class TurretStateMachine extends ƒAid.ComponentStateMachine<JOB> {
+//       public static readonly iSubclass: number = ƒ.Component.registerSubclass(TurretStateMachine);
+//       private static instructions: ƒAid.StateMachineInstructions<JOB> = TurretStateMachine.get();
+//       constructor() {
+//         super();
+//         this.instructions = TurretStateMachine.instructions; // setup instructions with the static set
+//         // Don't start when running in editor
+//         if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+//           return;
+//         // Listen to this component being added to or removed from a node
+//         this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
+//         this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
+//         this.addEventListener(ƒ.EVENT.NODE_DESERIALIZED, this.hndEvent);
+//       }
+//       public static get(): ƒAid.StateMachineInstructions<JOB> {
+//         let setup: ƒAid.StateMachineInstructions<JOB> = new ƒAid.StateMachineInstructions();
+//         setup.transitDefault = TurretStateMachine.transitDefault;
+//         setup.actDefault = TurretStateMachine.actDefault;
+//         setup.setAction(JOB.IDLE, <ƒ.General>this.actIdle);
+//         setup.setAction(JOB.ATTACK, <ƒ.General>this.actAttack);
+//         return setup;
+//       }
+//       private static transitDefault(_machine: TurretStateMachine): void {
+//         console.log("Transit to", _machine.stateNext);
+//       }
+//       private static async actDefault(_machine: TurretStateMachine): Promise<void> {
+//         console.log(JOB[_machine.stateCurrent]);
+//       }
+//       private static async actIdle(_machine: TurretStateMachine): Promise<void> {
+//         _machine.node.mtxLocal.rotateY(1);
+//         let distance: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(ship.mtxWorld.translation, _machine.node.mtxWorld.translation);
+//         if (distance.magnitude < 10)
+//           _machine.transit(JOB.ATTACK);
+//       }
+//       private static async actAttack(_machine: TurretStateMachine): Promise<void> {
+//         _machine.node.mtxLocal.rotateY(-5);
+//         let distance: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(ship.mtxWorld.translation, _machine.node.mtxWorld.translation);
+//         if (distance.magnitude > 10)
+//           _machine.transit(JOB.IDLE);
+//       }
+//       // private static async actEscape(_machine: StateMachine): Promise<void> {
+//       //   _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+//       //   let difference: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(_machine.node.mtxWorld.translation, cart.mtxWorld.translation);
+//       //   difference.normalize(_machine.forceEscape);
+//       //   _machine.cmpBody.applyForce(difference);
+//       //   StateMachine.actDefault(_machine);
+//       // }
+//       // private static async actDie(_machine: StateMachine): Promise<void> {
+//       //   //
+//       // }
+//       // private static transitDie(_machine: StateMachine): void {
+//       //   _machine.cmpBody.applyLinearImpulse(ƒ.Vector3.Y(5));
+//       //   let timer: ƒ.Timer = new ƒ.Timer(ƒ.Time.game, 100, 20, (_event: ƒ.EventTimer) => {
+//       //     _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("black", 1 - _event.count / 20);
+//       //     if (_event.lastCall)
+//       //       _machine.transit(JOB.RESPAWN);
+//       //   });
+//       //   console.log(timer);
+//       // }
+//       // private static actRespawn(_machine: StateMachine): void {
+//       //   let range: ƒ.Vector3 = ƒ.Vector3.SCALE(mtxTerrain.scaling, 0.5);
+//       //   _machine.cmpBody.setPosition(ƒ.Random.default.getVector3(range, ƒ.Vector3.SCALE(range, -1)));
+//       //   _machine.transit(JOB.IDLE);
+//       // }
+//       // Activate the functions of this component as response to events
+//       private hndEvent = (_event: Event): void => {
+//         switch (_event.type) {
+//           case ƒ.EVENT.COMPONENT_ADD:
+//             ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update);
+//             this.transit(JOB.IDLE);
+//             break;
+//           case ƒ.EVENT.COMPONENT_REMOVE:
+//             this.removeEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
+//             this.removeEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
+//             ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.update);
+//             break;
+//           case ƒ.EVENT.NODE_DESERIALIZED:
+//             this.transit(JOB.IDLE);
+//             // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
+//             // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
+//             //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
+//             //   if (_event.cmpRigidbody.node.name == "Cart" && this.stateCurrent != JOB.DIE)
+//             //     this.transit(JOB.ESCAPE);
+//             // });
+//             // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event: ƒ.EventPhysics) => {
+//             //   if (this.stateCurrent == JOB.ESCAPE)
+//             //     this.transit(JOB.IDLE);
+//             // });
+//             break;
+//         }
+//       }
+//       private update = (_event: Event): void => {
+//         this.act();
+//       }
+//       // protected reduceMutator(_mutator: ƒ.Mutator): void {
+//       //   // delete properties that should not be mutated
+//       //   // undefined properties and private fields (#) will not be included by default
+//       // }
+//     }
+//   }
 var Script;
 (function (Script) {
     var f = FudgeCore;
@@ -248,7 +357,7 @@ var Script;
             velocityY += gravity * deltaTime;
             ySpeed = velocityY * deltaTime;
             this.checkCollission();
-            this.characterPos.mtxLocal.translateY(ySpeed, true);
+            this.node.getParent().mtxLocal.translateY(ySpeed, true);
         }
         checkCollission() {
             let floors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
@@ -256,7 +365,7 @@ var Script;
             let doors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
             let stairs = Script.branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
             let obstacles = [floors, walls, doors, stairs];
-            this.pos = this.characterPos.mtxLocal.translation;
+            this.pos = this.node.getParent().mtxLocal.translation;
             for (let obstacleType of obstacles) {
                 for (let obstacle of obstacleType) {
                     this.obstaclePos = obstacle.mtxLocal.translation;
@@ -319,7 +428,7 @@ var Script;
                         ySpeed = 0;
                         velocityY = 0;
                         this.pos.y = this.obstaclePos.y;
-                        this.characterPos.mtxLocal.translation = this.pos;
+                        this.node.getParent().mtxLocal.translation = this.pos;
                     }
                 }
             }
@@ -414,10 +523,10 @@ var Script;
     let cmpCamera;
     let gravityCmp;
     Script.walkSpeed = 3;
+    let deltaTime;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
     let config;
-    Script.vctMouse = fc.Vector2.ZERO();
     let spacePressed = false;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
@@ -435,6 +544,8 @@ var Script;
     function setup(_event) {
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
+        Script.branch.addEventListener("playSound", hndPlaySound);
+        Script.branch.addComponent(new fc.ComponentAudio());
         Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
         Script.characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
         gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
@@ -450,31 +561,38 @@ var Script;
         window.addEventListener("contextmenu", (e) => {
             e.preventDefault();
         });
-        window.addEventListener("mousemove", hndMouse);
     }
     function update(_event) {
-        let deltaTime = fc.Loop.timeFrameGame / 1000;
+        deltaTime = fc.Loop.timeFrameGame / 1000;
         Script.characterCmp.update(deltaTime);
         gravityCmp.update(deltaTime);
         controls();
-        // ƒ.Physics.simulate();  // if physics is included and used
+        fc.Physics.simulate(); // if physics is included and used
         viewport.draw();
         updateCamera();
         fc.AudioManager.default.update();
     }
+    function hndPlaySound(e) {
+        e.currentTarget;
+        let audioComp = Script.branch.getComponent(fc.ComponentAudio);
+        let inventorySound = new fc.Audio("./sounds/cloth-inventory.wav");
+        let stoneSound = new fc.Audio("./sounds/stone.mp3");
+        if (e.target == Script.characterNode) {
+            audioComp.setAudio(inventorySound);
+        }
+        else {
+            audioComp.setAudio(stoneSound);
+        }
+        audioComp.play(true);
+        audioComp.volume = 0.5;
+    }
     function hndAim(e) {
         if (Script.weapon === "stones") {
             if (e.button === 2) {
-                e.preventDefault();
                 document.body.style.cursor = "crosshair";
-                console.log("click now");
-                window.addEventListener("click", (clickEvent) => Script.characterCmp.hndThrow(clickEvent));
+                window.addEventListener("click", Script.characterCmp.hndThrow);
             }
         }
-    }
-    function hndMouse(e) {
-        Script.vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
-        Script.vctMouse.y = 2 * (e.clientY / window.innerHeight) - 1;
     }
     function controls() {
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
@@ -576,8 +694,10 @@ var Script;
     var fAid = FudgeAid;
     var fc = FudgeCore;
     class StoneNode extends fAid.NodeSprite {
-        constructor() {
+        stoneDirection;
+        constructor(_stoneDirection) {
             super("stone");
+            this.stoneDirection = _stoneDirection;
             let Material = new fc.Material("stoneMat", fc.ShaderLitTextured);
             let StoneImage = new fc.TextureImage();
             StoneImage.load("./imgs/stone.gif");
@@ -587,15 +707,28 @@ var Script;
             this.addComponent(stoneTransform);
             let stoneRigid = new fc.ComponentRigidbody(2, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
+            let gravityCmp = new Script.GravityComponent();
+            this.addComponent(gravityCmp);
             let characterPos = Script.characterNode.getParent().mtxWorld.translation;
+            characterPos.y += 0.5;
             let scaleVec = new fc.Vector3(0.4, 0.3, 0.5);
-            stoneTransform.mtxLocal.scale(scaleVec);
             stoneTransform.mtxLocal.translate(characterPos);
-            console.log(characterPos);
+            stoneTransform.mtxLocal.translateZ(-0.05);
+            stoneTransform.mtxLocal.scale(scaleVec);
+            console.log(this.stoneDirection.x);
+            let forceVector = new fc.Vector3(1000, 1000, 0);
+            forceVector.x = this.stoneDirection.x;
+            forceVector.y = -this.stoneDirection.y;
+            forceVector.scale(1000);
+            stoneRigid.applyForce(forceVector);
+            stoneRigid.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.hndCollision);
             let cmpMat = this.getComponent(fc.ComponentMaterial);
             cmpMat.material = Material;
             new fc.CoatTextured();
         }
+        hndCollision = () => {
+            this.dispatchEvent(new Event("playSound", { bubbles: true }));
+        };
     }
     Script.StoneNode = StoneNode;
 })(Script || (Script = {}));

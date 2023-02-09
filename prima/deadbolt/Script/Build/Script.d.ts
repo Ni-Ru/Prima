@@ -94,7 +94,6 @@ declare namespace Script {
     const walkSpeed: number;
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
-    let vctMouse: fc.Vector2;
 }
 declare namespace Script {
     import fc = FudgeCore;
@@ -115,7 +114,10 @@ declare namespace Script {
 }
 declare namespace Script {
     import fAid = FudgeAid;
+    import fc = FudgeCore;
     class StoneNode extends fAid.NodeSprite {
-        constructor();
+        stoneDirection: fc.Vector2;
+        constructor(_stoneDirection: fc.Vector2);
+        hndCollision: () => void;
     }
 }
