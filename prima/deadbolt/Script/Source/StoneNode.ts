@@ -21,7 +21,7 @@ namespace Script {
             let stoneTransform: fc.ComponentTransform = new fc.ComponentTransform();
             this.addComponent(stoneTransform);
 
-            let stoneRigid: fc.ComponentRigidbody = new fc.ComponentRigidbody(2, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
+            let stoneRigid: fc.ComponentRigidbody = new fc.ComponentRigidbody(5, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
 
             let gravityCmp: GravityComponent = new GravityComponent();
@@ -34,14 +34,14 @@ namespace Script {
             let scaleVec: fc.Vector3 = new fc.Vector3(0.4, 0.3, 0.5);
 
             stoneTransform.mtxLocal.translate(characterPos);
-            stoneTransform.mtxLocal.translateZ(-0.05);
+            stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
             console.log(this.stoneDirection.x);
 
             let forceVector: fc.Vector3 = new fc.Vector3(1000, 1000, 0);
             forceVector.x = this.stoneDirection.x;
             forceVector.y = -this.stoneDirection.y;
-            forceVector.scale(1000);
+            forceVector.scale(5000);
             
             stoneRigid.applyForce(forceVector);
             stoneRigid.addEventListener(fc.EVENT_PHYSICS.COLLISION_ENTER, this.hndCollision);

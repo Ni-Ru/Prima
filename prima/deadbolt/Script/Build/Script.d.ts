@@ -38,6 +38,37 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import fAid = FudgeAid;
+    class EnemyNode extends fAid.NodeSprite {
+        constructor();
+    }
+}
+declare namespace Script {
+    import fcAid = FudgeAid;
+    enum JOB {
+        IDLE = 0,
+        SEARCH = 1,
+        ATTACK = 2
+    }
+    export class EnemyStateMachine extends fcAid.ComponentStateMachine<JOB> {
+        static readonly iSubclass: number;
+        private static instructions;
+        private enemyNode;
+        private directionRight;
+        constructor();
+        static get(): fcAid.StateMachineInstructions<JOB>;
+        private static transitDefault;
+        private static actDefault;
+        private static actIdle;
+        private static actSearch;
+        private static actAttack;
+        private hndEvent;
+        private update;
+        private checkView;
+    }
+    export {};
+}
+declare namespace Script {
     import f = FudgeCore;
     class GameState extends f.Mutable {
         protected reduceMutator(_Mutator: f.Mutator): void;

@@ -119,6 +119,7 @@ var Script;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     Script.openDoor = false;
     let doorTransform;
+    let doorRigidBody;
     class DoorComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(DoorComponent);
@@ -148,6 +149,7 @@ var Script;
         };
         interaction() {
             doorTransform = this.node.getComponent(fc.ComponentTransform);
+            doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
             switch (Script.openDoor) {
                 case true:
                     this.closeDoor();
@@ -162,11 +164,13 @@ var Script;
             }
         }
         openDoor() {
+            doorRigidBody.activate(false);
             doorTransform.mtxLocal.translateX(0.25);
             doorTransform.mtxLocal.scaleX(3);
             doorTransform.mtxLocal.translateZ(-0.1);
         }
         closeDoor() {
+            doorRigidBody.activate(true);
             doorTransform.mtxLocal.scaleX(1 / 3);
             doorTransform.mtxLocal.translateX(-0.25);
             doorTransform.mtxLocal.translateZ(0.1);
@@ -174,112 +178,160 @@ var Script;
     }
     Script.DoorComponent = DoorComponent;
 })(Script || (Script = {}));
-// namespace Script {
-//     import ƒ = FudgeCore;
-//     import ƒAid = FudgeAid;
-//     enum JOB {
-//       IDLE, ATTACK
-//     }
-//     export class TurretStateMachine extends ƒAid.ComponentStateMachine<JOB> {
-//       public static readonly iSubclass: number = ƒ.Component.registerSubclass(TurretStateMachine);
-//       private static instructions: ƒAid.StateMachineInstructions<JOB> = TurretStateMachine.get();
-//       constructor() {
-//         super();
-//         this.instructions = TurretStateMachine.instructions; // setup instructions with the static set
-//         // Don't start when running in editor
-//         if (ƒ.Project.mode == ƒ.MODE.EDITOR)
-//           return;
-//         // Listen to this component being added to or removed from a node
-//         this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
-//         this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
-//         this.addEventListener(ƒ.EVENT.NODE_DESERIALIZED, this.hndEvent);
-//       }
-//       public static get(): ƒAid.StateMachineInstructions<JOB> {
-//         let setup: ƒAid.StateMachineInstructions<JOB> = new ƒAid.StateMachineInstructions();
-//         setup.transitDefault = TurretStateMachine.transitDefault;
-//         setup.actDefault = TurretStateMachine.actDefault;
-//         setup.setAction(JOB.IDLE, <ƒ.General>this.actIdle);
-//         setup.setAction(JOB.ATTACK, <ƒ.General>this.actAttack);
-//         return setup;
-//       }
-//       private static transitDefault(_machine: TurretStateMachine): void {
-//         console.log("Transit to", _machine.stateNext);
-//       }
-//       private static async actDefault(_machine: TurretStateMachine): Promise<void> {
-//         console.log(JOB[_machine.stateCurrent]);
-//       }
-//       private static async actIdle(_machine: TurretStateMachine): Promise<void> {
-//         _machine.node.mtxLocal.rotateY(1);
-//         let distance: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(ship.mtxWorld.translation, _machine.node.mtxWorld.translation);
-//         if (distance.magnitude < 10)
-//           _machine.transit(JOB.ATTACK);
-//       }
-//       private static async actAttack(_machine: TurretStateMachine): Promise<void> {
-//         _machine.node.mtxLocal.rotateY(-5);
-//         let distance: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(ship.mtxWorld.translation, _machine.node.mtxWorld.translation);
-//         if (distance.magnitude > 10)
-//           _machine.transit(JOB.IDLE);
-//       }
-//       // private static async actEscape(_machine: StateMachine): Promise<void> {
-//       //   _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-//       //   let difference: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(_machine.node.mtxWorld.translation, cart.mtxWorld.translation);
-//       //   difference.normalize(_machine.forceEscape);
-//       //   _machine.cmpBody.applyForce(difference);
-//       //   StateMachine.actDefault(_machine);
-//       // }
-//       // private static async actDie(_machine: StateMachine): Promise<void> {
-//       //   //
-//       // }
-//       // private static transitDie(_machine: StateMachine): void {
-//       //   _machine.cmpBody.applyLinearImpulse(ƒ.Vector3.Y(5));
-//       //   let timer: ƒ.Timer = new ƒ.Timer(ƒ.Time.game, 100, 20, (_event: ƒ.EventTimer) => {
-//       //     _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("black", 1 - _event.count / 20);
-//       //     if (_event.lastCall)
-//       //       _machine.transit(JOB.RESPAWN);
-//       //   });
-//       //   console.log(timer);
-//       // }
-//       // private static actRespawn(_machine: StateMachine): void {
-//       //   let range: ƒ.Vector3 = ƒ.Vector3.SCALE(mtxTerrain.scaling, 0.5);
-//       //   _machine.cmpBody.setPosition(ƒ.Random.default.getVector3(range, ƒ.Vector3.SCALE(range, -1)));
-//       //   _machine.transit(JOB.IDLE);
-//       // }
-//       // Activate the functions of this component as response to events
-//       private hndEvent = (_event: Event): void => {
-//         switch (_event.type) {
-//           case ƒ.EVENT.COMPONENT_ADD:
-//             ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update);
-//             this.transit(JOB.IDLE);
-//             break;
-//           case ƒ.EVENT.COMPONENT_REMOVE:
-//             this.removeEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
-//             this.removeEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
-//             ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.update);
-//             break;
-//           case ƒ.EVENT.NODE_DESERIALIZED:
-//             this.transit(JOB.IDLE);
-//             // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
-//             // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
-//             //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
-//             //   if (_event.cmpRigidbody.node.name == "Cart" && this.stateCurrent != JOB.DIE)
-//             //     this.transit(JOB.ESCAPE);
-//             // });
-//             // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event: ƒ.EventPhysics) => {
-//             //   if (this.stateCurrent == JOB.ESCAPE)
-//             //     this.transit(JOB.IDLE);
-//             // });
-//             break;
-//         }
-//       }
-//       private update = (_event: Event): void => {
-//         this.act();
-//       }
-//       // protected reduceMutator(_mutator: ƒ.Mutator): void {
-//       //   // delete properties that should not be mutated
-//       //   // undefined properties and private fields (#) will not be included by default
-//       // }
-//     }
-//   }
+var Script;
+(function (Script) {
+    var fAid = FudgeAid;
+    var fc = FudgeCore;
+    class EnemyNode extends fAid.NodeSprite {
+        constructor() {
+            super("enemy");
+            let EnemyImage = new fc.TextureImage();
+            let Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
+            let enemyTransform = new fc.ComponentTransform();
+            let enemyCoat = new fc.CoatTextured(undefined, EnemyImage);
+            let gravityCmp = new Script.GravityComponent();
+            let stateMachine = new Script.EnemyStateMachine();
+            this.addComponent(enemyTransform);
+            this.addComponent(gravityCmp);
+            this.addComponent(stateMachine);
+            EnemyImage.load("./imgs/enemySprite.gif");
+            Material.coat = enemyCoat;
+            enemyTransform.mtxLocal.translateY(0.5);
+            enemyTransform.mtxLocal.scaleX(0.5);
+            let cmpMat = this.getComponent(fc.ComponentMaterial);
+            cmpMat.material = Material;
+            new fc.CoatTextured();
+        }
+    }
+    Script.EnemyNode = EnemyNode;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var fc = FudgeCore;
+    var fcAid = FudgeAid;
+    fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    let JOB;
+    (function (JOB) {
+        JOB[JOB["IDLE"] = 0] = "IDLE";
+        JOB[JOB["SEARCH"] = 1] = "SEARCH";
+        JOB[JOB["ATTACK"] = 2] = "ATTACK";
+    })(JOB || (JOB = {}));
+    class EnemyStateMachine extends fcAid.ComponentStateMachine {
+        static iSubclass = fc.Component.registerSubclass(EnemyStateMachine);
+        static instructions = EnemyStateMachine.get();
+        enemyNode;
+        directionRight;
+        constructor() {
+            super();
+            this.instructions = EnemyStateMachine.instructions; // setup instructions with the static set
+            // Don't start when running in editor
+            if (fc.Project.mode == fc.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
+        }
+        static get() {
+            let setup = new fcAid.StateMachineInstructions();
+            setup.transitDefault = EnemyStateMachine.transitDefault;
+            setup.actDefault = EnemyStateMachine.actDefault;
+            setup.setAction(JOB.IDLE, this.actIdle);
+            setup.setAction(JOB.SEARCH, this.actSearch);
+            setup.setAction(JOB.ATTACK, this.actAttack);
+            return setup;
+        }
+        static transitDefault(_machine) {
+            //  console.log("Transit to", _machine.stateNext);
+        }
+        static async actDefault(_machine) {
+            //console.log(JOB[_machine.stateCurrent]);
+        }
+        static async actIdle(_machine) {
+            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
+            console.log("idle");
+            if (distance.magnitude < 5)
+                _machine.transit(JOB.ATTACK);
+        }
+        static async actSearch(_machine) {
+            console.log("search");
+            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
+            if (distance.magnitude < 10)
+                _machine.transit(JOB.ATTACK);
+        }
+        static async actAttack(_machine) {
+            console.log("attack");
+            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
+            if (distance.magnitude > 5)
+                _machine.transit(JOB.IDLE);
+        }
+        // private static async actEscape(_machine: StateMachine): Promise<void> {
+        //   _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+        //   let difference: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(_machine.node.mtxWorld.translation, cart.mtxWorld.translation);
+        //   difference.normalize(_machine.forceEscape);
+        //   _machine.cmpBody.applyForce(difference);
+        //   StateMachine.actDefault(_machine);
+        // }
+        // private static async actDie(_machine: StateMachine): Promise<void> {
+        //   //
+        // }
+        // private static transitDie(_machine: StateMachine): void {
+        //   _machine.cmpBody.applyLinearImpulse(ƒ.Vector3.Y(5));
+        //   let timer: ƒ.Timer = new ƒ.Timer(ƒ.Time.game, 100, 20, (_event: ƒ.EventTimer) => {
+        //     _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("black", 1 - _event.count / 20);
+        //     if (_event.lastCall)
+        //       _machine.transit(JOB.RESPAWN);
+        //   });
+        //   console.log(timer);
+        // }
+        // private static actRespawn(_machine: StateMachine): void {
+        //   let range: ƒ.Vector3 = ƒ.Vector3.SCALE(mtxTerrain.scaling, 0.5);
+        //   _machine.cmpBody.setPosition(ƒ.Random.default.getVector3(range, ƒ.Vector3.SCALE(range, -1)));
+        //   _machine.transit(JOB.IDLE);
+        // }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* COMPONENT_ADD */:
+                    fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+                    this.enemyNode = this.node;
+                    this.transit(JOB.IDLE);
+                    break;
+                case "componentRemove" /* COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
+                    fc.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+                    break;
+                case "nodeDeserialized" /* NODE_DESERIALIZED */:
+                    this.transit(JOB.IDLE);
+                    this.directionRight = true;
+                    // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
+                    // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
+                    //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
+                    //   if (_event.cmpRigidbody.node.name == "Cart" && this.stateCurrent != JOB.DIE)
+                    //     this.transit(JOB.ESCAPE);
+                    // });
+                    // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event: ƒ.EventPhysics) => {
+                    //   if (this.stateCurrent == JOB.ESCAPE)
+                    //     this.transit(JOB.IDLE);
+                    // });
+                    break;
+            }
+        };
+        update = (_event) => {
+            this.act();
+            this.checkView();
+        };
+        checkView = () => {
+            console.log(this.enemyNode.mtxWorld.getX());
+            let PlayerDir = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
+            console.log(PlayerDir);
+            console.log(this.enemyNode.mtxWorld.translation);
+            //console.log(fc.Vector3.DOT(this.enemyNode.mtxWorld.getX(), ));
+        };
+    }
+    Script.EnemyStateMachine = EnemyStateMachine;
+})(Script || (Script = {}));
 var Script;
 (function (Script) {
     var f = FudgeCore;
@@ -522,6 +574,7 @@ var Script;
     let viewport;
     let cmpCamera;
     let gravityCmp;
+    let enemyNodes;
     Script.walkSpeed = 3;
     let deltaTime;
     Script.allowWalkRight = true;
@@ -546,6 +599,11 @@ var Script;
         Script.branch = viewport.getBranch();
         Script.branch.addEventListener("playSound", hndPlaySound);
         Script.branch.addComponent(new fc.ComponentAudio());
+        enemyNodes = Script.branch.getChildrenByName("enemies")[0].getChildrenByName("enemy_Pos");
+        for (let enemy of enemyNodes) {
+            let newEnemy = new Script.EnemyNode();
+            enemy.appendChild(newEnemy);
+        }
         Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
         Script.characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
         gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
@@ -579,12 +637,13 @@ var Script;
         let stoneSound = new fc.Audio("./sounds/stone.mp3");
         if (e.target == Script.characterNode) {
             audioComp.setAudio(inventorySound);
+            audioComp.volume = 0.5;
         }
         else {
             audioComp.setAudio(stoneSound);
+            audioComp.volume = 1.5;
         }
         audioComp.play(true);
-        audioComp.volume = 0.5;
     }
     function hndAim(e) {
         if (Script.weapon === "stones") {
@@ -705,7 +764,7 @@ var Script;
             Material.coat = stoneCoat;
             let stoneTransform = new fc.ComponentTransform();
             this.addComponent(stoneTransform);
-            let stoneRigid = new fc.ComponentRigidbody(2, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
+            let stoneRigid = new fc.ComponentRigidbody(5, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
             let gravityCmp = new Script.GravityComponent();
             this.addComponent(gravityCmp);
@@ -713,13 +772,13 @@ var Script;
             characterPos.y += 0.5;
             let scaleVec = new fc.Vector3(0.4, 0.3, 0.5);
             stoneTransform.mtxLocal.translate(characterPos);
-            stoneTransform.mtxLocal.translateZ(-0.05);
+            stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
             console.log(this.stoneDirection.x);
             let forceVector = new fc.Vector3(1000, 1000, 0);
             forceVector.x = this.stoneDirection.x;
             forceVector.y = -this.stoneDirection.y;
-            forceVector.scale(1000);
+            forceVector.scale(5000);
             stoneRigid.applyForce(forceVector);
             stoneRigid.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.hndCollision);
             let cmpMat = this.getComponent(fc.ComponentMaterial);

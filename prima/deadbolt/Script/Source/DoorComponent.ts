@@ -4,7 +4,7 @@ namespace Script {
 
   export let openDoor: boolean = false;
   let doorTransform: fc.ComponentTransform
-  
+  let doorRigidBody: fc.ComponentRigidbody;
 
   export class DoorComponent extends fc.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
@@ -42,6 +42,7 @@ namespace Script {
 
     interaction(){
       doorTransform = this.node.getComponent(fc.ComponentTransform);
+      doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
       switch (openDoor){
         case true:
           this.closeDoor();
@@ -57,12 +58,14 @@ namespace Script {
     }
 
     openDoor(){
+      doorRigidBody.activate(false)
       doorTransform.mtxLocal.translateX(0.25);
       doorTransform.mtxLocal.scaleX(3);
       doorTransform.mtxLocal.translateZ(-0.1);
     }
 
     closeDoor(){
+      doorRigidBody.activate(true);
       doorTransform.mtxLocal.scaleX(1/3);
       doorTransform.mtxLocal.translateX(-0.25);
       doorTransform.mtxLocal.translateZ(0.1);

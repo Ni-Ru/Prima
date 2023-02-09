@@ -9,6 +9,7 @@ namespace Script {
   
   export let branch: fc.Node;
   export let characterNode: fc.Node;
+  let enemyNodes: fc.Node[];
 
   export let gameState: GameState;
 
@@ -46,6 +47,13 @@ namespace Script {
     branch.addEventListener("playSound", hndPlaySound);
 
     branch.addComponent(new fc.ComponentAudio());
+
+    enemyNodes = branch.getChildrenByName("enemies")[0].getChildrenByName("enemy_Pos");
+    
+    for(let enemy of enemyNodes){
+      let newEnemy: EnemyNode = new EnemyNode();
+      enemy.appendChild(newEnemy);
+    }
 
     characterNode = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
 
@@ -87,11 +95,12 @@ namespace Script {
     let stoneSound: fc.Audio = new fc.Audio("./sounds/stone.mp3");
     if(e.target == characterNode){
       audioComp.setAudio(inventorySound);
+      audioComp.volume = 0.5;
     }else{
       audioComp.setAudio(stoneSound);
+      audioComp.volume = 1.5;
     }
       audioComp.play(true);
-      audioComp.volume = 0.5;
   }
 
   function hndAim(e: MouseEvent): void{
