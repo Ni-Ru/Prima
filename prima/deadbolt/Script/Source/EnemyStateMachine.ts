@@ -11,9 +11,9 @@ namespace Script {
       public static readonly iSubclass: number = fc.Component.registerSubclass(EnemyStateMachine);
       private static instructions: fcAid.StateMachineInstructions<JOB> = EnemyStateMachine.get();
 
-      private enemyNode: fc.Node;
+      //private enemyNode: fc.Node;
 
-      private directionRight: boolean;
+      //private directionRight: boolean;
   
       constructor() {
         super();
@@ -49,22 +49,22 @@ namespace Script {
       }
   
       private static async actIdle(_machine: EnemyStateMachine): Promise<void> {
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
-        console.log("idle");
+        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
+        //console.log("idle");
         if (distance.magnitude < 5)
           _machine.transit(JOB.ATTACK);
       }
 
       private static async actSearch(_machine: EnemyStateMachine): Promise<void> {
-        console.log("search")
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
+        //console.log("search")
+        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
         if (distance.magnitude < 10)
           _machine.transit(JOB.ATTACK);
       }
       
       private static async actAttack(_machine: EnemyStateMachine): Promise<void> {
-        console.log("attack")
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
+        //console.log("attack")
+        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
         if (distance.magnitude > 5)
           _machine.transit(JOB.IDLE);
       }
@@ -101,7 +101,7 @@ namespace Script {
         switch (_event.type) {
           case fc.EVENT.COMPONENT_ADD:
             fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, this.update);
-            this.enemyNode = this.node;
+            //this.enemyNode = this.node;
             this.transit(JOB.IDLE);
             break;
           case fc.EVENT.COMPONENT_REMOVE:
@@ -111,7 +111,7 @@ namespace Script {
             break;
           case fc.EVENT.NODE_DESERIALIZED:
             this.transit(JOB.IDLE);
-            this.directionRight= true;
+            //this.directionRight= true;
             // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
             // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
             //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
@@ -132,10 +132,10 @@ namespace Script {
       }
 
       private checkView = (): void =>{
-        console.log(this.enemyNode.mtxWorld.getX());
-        let PlayerDir: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
-        console.log(PlayerDir);
-        console.log(this.enemyNode.mtxWorld.translation);
+        //console.log(this.enemyNode.mtxWorld.getX());
+        //let PlayerDir: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
+        // console.log(PlayerDir);
+        // console.log(this.enemyNode.mtxWorld.translation);
         //console.log(fc.Vector3.DOT(this.enemyNode.mtxWorld.getX(), ));
       }
   

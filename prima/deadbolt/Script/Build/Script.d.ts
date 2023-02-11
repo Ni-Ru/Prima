@@ -53,8 +53,6 @@ declare namespace Script {
     export class EnemyStateMachine extends fcAid.ComponentStateMachine<JOB> {
         static readonly iSubclass: number;
         private static instructions;
-        private enemyNode;
-        private directionRight;
         constructor();
         static get(): fcAid.StateMachineInstructions<JOB>;
         private static transitDefault;
@@ -118,9 +116,15 @@ declare namespace Script {
 }
 declare namespace Script {
     import fc = FudgeCore;
+    import fcAid = FudgeAid;
     let characterCmp: CharacterComponent;
     let branch: fc.Node;
-    let characterNode: fc.Node;
+    let characterPos: fc.Node;
+    let characterSprite: fcAid.NodeSprite;
+    let idle: ƒAid.SpriteSheetAnimation;
+    let walk: ƒAid.SpriteSheetAnimation;
+    let attack: ƒAid.SpriteSheetAnimation;
+    let currentAnimation: ƒAid.SpriteSheetAnimation;
     let gameState: GameState;
     const walkSpeed: number;
     let allowWalkRight: boolean;

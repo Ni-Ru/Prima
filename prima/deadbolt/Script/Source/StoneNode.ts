@@ -21,19 +21,19 @@ namespace Script {
             let stoneTransform: fc.ComponentTransform = new fc.ComponentTransform();
             this.addComponent(stoneTransform);
 
-            let stoneRigid: fc.ComponentRigidbody = new fc.ComponentRigidbody(5, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
+            let stoneRigid: fc.ComponentRigidbody = new fc.ComponentRigidbody(10, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
 
             let gravityCmp: GravityComponent = new GravityComponent();
             this.addComponent(gravityCmp);
 
-            let characterPos = characterNode.getParent().mtxWorld.translation;
-            characterPos.y += 0.5;
+            let characterPosTrans = characterPos.mtxWorld.translation;
+            characterPosTrans.y += 0.5;
 
 
-            let scaleVec: fc.Vector3 = new fc.Vector3(0.4, 0.3, 0.5);
+            let scaleVec: fc.Vector3 = new fc.Vector3(0.2, 0.15, 0.5);
 
-            stoneTransform.mtxLocal.translate(characterPos);
+            stoneTransform.mtxLocal.translate(characterPosTrans);
             stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
             console.log(this.stoneDirection.x);

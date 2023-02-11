@@ -51,16 +51,18 @@ namespace Script {
     }
 
     update(deltaTime: number) {
-      this.characterPos.mtxLocal.translateX(xSpeed * deltaTime, true)
+      this.node.getParent().mtxLocal.translateX(xSpeed * deltaTime, true)
     }
 
     walk(direction: number) {
       xSpeed = walkSpeed * direction;
+      
     }
 
     useStairs(exit: number){
-      this.characterPos.mtxLocal.translateY(exit);
+      characterPos.mtxLocal.translateY(exit);
     }
+
 
 
     changeWeapon(){

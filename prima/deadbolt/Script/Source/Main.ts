@@ -1,5 +1,6 @@
 namespace Script {
   import fc = FudgeCore;
+  import fcAid = FudgeAid;
 
   let viewport: fc.Viewport;
   
@@ -8,8 +9,24 @@ namespace Script {
   let gravityCmp: GravityComponent;
   
   export let branch: fc.Node;
-  export let characterNode: fc.Node;
+  export let characterPos: fc.Node;
   let enemyNodes: fc.Node[];
+  export let characterSprite: fcAid.NodeSprite;
+  let characterTransform: fc.ComponentTransform;
+
+  let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
+  let imgSpriteSheetWalk: ƒ.TextureImage = new ƒ.TextureImage();
+  let imgSpriteSheetAttack: ƒ.TextureImage = new ƒ.TextureImage();
+
+  let idleCoat: ƒ.CoatTextured;
+  let walkingCoat: ƒ.CoatTextured;
+  let attackingCoat: ƒ.CoatTextured;
+
+  export let idle: ƒAid.SpriteSheetAnimation;
+  export let walk: ƒAid.SpriteSheetAnimation;
+  export let attack: ƒAid.SpriteSheetAnimation;
+  export let currentAnimation: ƒAid.SpriteSheetAnimation;
+
 
   export let gameState: GameState;
 
@@ -44,25 +61,23 @@ namespace Script {
     viewport = _event.detail;
     branch = viewport.getBranch();
 
+    loadSprites();
+    loadCharacter();
     branch.addEventListener("playSound", hndPlaySound);
 
     branch.addComponent(new fc.ComponentAudio());
 
     enemyNodes = branch.getChildrenByName("enemies")[0].getChildrenByName("enemy_Pos");
-    
+
+
     for(let enemy of enemyNodes){
       let newEnemy: EnemyNode = new EnemyNode();
       enemy.appendChild(newEnemy);
     }
 
-    characterNode = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
-
-    characterCmp = characterNode.getComponent(CharacterComponent);
-    gravityCmp = characterNode.getComponent(GravityComponent);
-
     cmpCamera = viewport.camera;
     cmpCamera.mtxPivot.rotateY(180);
-    cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
+    cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 15);
 
     window.addEventListener("mousedown", hndAim);
     window.addEventListener("mouseup", (e) => {
@@ -85,6 +100,49 @@ namespace Script {
     viewport.draw();
     updateCamera();
     fc.AudioManager.default.update();
+    console.log(currentAnimation)
+  }
+
+
+
+  function loadCharacter(){
+    loadSprites();
+    characterSprite = new fcAid.NodeSprite("character");
+    characterSprite.addComponent(new fc.ComponentTransform(new fc.Matrix4x4()));
+    characterTransform = characterSprite.getComponent(fc.ComponentTransform);
+    characterTransform.mtxLocal.scaleX(0.5);
+    characterTransform.mtxLocal.translateY(0.5);
+    
+
+    currentAnimation = idle;
+    
+    characterPos = branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0];
+
+    characterPos.appendChild(characterSprite);
+    characterSprite.addComponent(new CharacterComponent);
+    characterSprite.addComponent(new GravityComponent);
+    characterCmp = characterSprite.getComponent(CharacterComponent);
+    gravityCmp = characterSprite.getComponent(GravityComponent);
+    console.log(characterPos);
+  }
+
+  async function loadSprites(){
+    await imgSpriteSheet.load("./imgs/Idle.png");
+    idleCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+    await imgSpriteSheetWalk.load("./imgs/Walk.png");
+    walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
+    await imgSpriteSheetAttack.load("./imgs/Idle.gif");
+    attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
+
+    idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
+    idle.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 10,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(27));
+
+    walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
+    walk.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 5,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(10));
+
+    currentAnimation = idle;
+    characterSprite.setAnimation(currentAnimation);
+    characterSprite.setFrameDirection(1);
   }
 
 
@@ -93,7 +151,7 @@ namespace Script {
     let audioComp: fc.ComponentAudio = branch.getComponent(fc.ComponentAudio);
     let inventorySound: fc.Audio = new fc.Audio("./sounds/cloth-inventory.wav");
     let stoneSound: fc.Audio = new fc.Audio("./sounds/stone.mp3");
-    if(e.target == characterNode){
+    if(e.target == characterSprite){
       audioComp.setAudio(inventorySound);
       audioComp.volume = 0.5;
     }else{
@@ -115,6 +173,8 @@ namespace Script {
   function controls(){
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])){
         if(allowWalkRight){
+          currentAnimation=walk;
+          characterSprite.setAnimation(walk);
           characterCmp.walk(1)
         }
       }else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])){
@@ -136,7 +196,7 @@ namespace Script {
   }
 
   function updateCamera(): void {
-      let pos: fc.Vector3 = characterNode.getParent().mtxLocal.translation;
+      let pos: fc.Vector3 = characterSprite.getParent().mtxLocal.translation;
       let origin: fc.Vector3 = cmpCamera.mtxPivot.translation;
       cmpCamera.mtxPivot.translation = new fc.Vector3( pos.x, pos.y, origin.z);
   }

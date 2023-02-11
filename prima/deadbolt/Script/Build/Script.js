@@ -38,13 +38,13 @@ var Script;
             }
         };
         update(deltaTime) {
-            this.characterPos.mtxLocal.translateX(Script.xSpeed * deltaTime, true);
+            this.node.getParent().mtxLocal.translateX(Script.xSpeed * deltaTime, true);
         }
         walk(direction) {
             Script.xSpeed = Script.walkSpeed * direction;
         }
         useStairs(exit) {
-            this.characterPos.mtxLocal.translateY(exit);
+            Script.characterPos.mtxLocal.translateY(exit);
         }
         changeWeapon() {
             this.node.dispatchEvent(new Event("playSound", { bubbles: true }));
@@ -186,8 +186,8 @@ var Script;
         constructor() {
             super("enemy");
             let EnemyImage = new fc.TextureImage();
-            let Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
             let enemyTransform = new fc.ComponentTransform();
+            let Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
             let enemyCoat = new fc.CoatTextured(undefined, EnemyImage);
             let gravityCmp = new Script.GravityComponent();
             let stateMachine = new Script.EnemyStateMachine();
@@ -219,8 +219,8 @@ var Script;
     class EnemyStateMachine extends fcAid.ComponentStateMachine {
         static iSubclass = fc.Component.registerSubclass(EnemyStateMachine);
         static instructions = EnemyStateMachine.get();
-        enemyNode;
-        directionRight;
+        //private enemyNode: fc.Node;
+        //private directionRight: boolean;
         constructor() {
             super();
             this.instructions = EnemyStateMachine.instructions; // setup instructions with the static set
@@ -248,20 +248,20 @@ var Script;
             //console.log(JOB[_machine.stateCurrent]);
         }
         static async actIdle(_machine) {
-            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
-            console.log("idle");
+            let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
+            //console.log("idle");
             if (distance.magnitude < 5)
                 _machine.transit(JOB.ATTACK);
         }
         static async actSearch(_machine) {
-            console.log("search");
-            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
+            //console.log("search")
+            let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
             if (distance.magnitude < 10)
                 _machine.transit(JOB.ATTACK);
         }
         static async actAttack(_machine) {
-            console.log("attack");
-            let distance = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, _machine.node.mtxWorld.translation);
+            //console.log("attack")
+            let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
             if (distance.magnitude > 5)
                 _machine.transit(JOB.IDLE);
         }
@@ -294,7 +294,7 @@ var Script;
             switch (_event.type) {
                 case "componentAdd" /* COMPONENT_ADD */:
                     fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
-                    this.enemyNode = this.node;
+                    //this.enemyNode = this.node;
                     this.transit(JOB.IDLE);
                     break;
                 case "componentRemove" /* COMPONENT_REMOVE */:
@@ -304,7 +304,7 @@ var Script;
                     break;
                 case "nodeDeserialized" /* NODE_DESERIALIZED */:
                     this.transit(JOB.IDLE);
-                    this.directionRight = true;
+                    //this.directionRight= true;
                     // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
                     // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
                     //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
@@ -323,10 +323,10 @@ var Script;
             this.checkView();
         };
         checkView = () => {
-            console.log(this.enemyNode.mtxWorld.getX());
-            let PlayerDir = fc.Vector3.DIFFERENCE(Script.characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
-            console.log(PlayerDir);
-            console.log(this.enemyNode.mtxWorld.translation);
+            //console.log(this.enemyNode.mtxWorld.getX());
+            //let PlayerDir: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
+            // console.log(PlayerDir);
+            // console.log(this.enemyNode.mtxWorld.translation);
             //console.log(fc.Vector3.DOT(this.enemyNode.mtxWorld.getX(), ));
         };
     }
@@ -406,10 +406,11 @@ var Script;
             }
         };
         update(deltaTime) {
+            this.characterPos = this.node.getParent();
             velocityY += gravity * deltaTime;
             ySpeed = velocityY * deltaTime;
             this.checkCollission();
-            this.node.getParent().mtxLocal.translateY(ySpeed, true);
+            this.characterPos.mtxLocal.translateY(ySpeed, true);
         }
         checkCollission() {
             let floors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
@@ -417,7 +418,7 @@ var Script;
             let doors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
             let stairs = Script.branch.getChildrenByName("environment")[0].getChildrenByName("stairs")[0].getChildrenByName("stair_Pos");
             let obstacles = [floors, walls, doors, stairs];
-            this.pos = this.node.getParent().mtxLocal.translation;
+            this.pos = this.characterPos.mtxLocal.translation;
             for (let obstacleType of obstacles) {
                 for (let obstacle of obstacleType) {
                     this.obstaclePos = obstacle.mtxLocal.translation;
@@ -555,7 +556,7 @@ var Script;
             this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
         }
         checkPlayerPos() {
-            let playerPos = Script.characterNode.getParent().mtxLocal.translation;
+            let playerPos = Script.characterPos.mtxLocal.translation;
             let interactablePos = this.node.getParent().mtxLocal.translation;
             if (Math.abs(playerPos.x - interactablePos.x) < 1) {
                 this.showInteract();
@@ -571,10 +572,18 @@ var Script;
 var Script;
 (function (Script) {
     var fc = FudgeCore;
+    var fcAid = FudgeAid;
     let viewport;
     let cmpCamera;
     let gravityCmp;
     let enemyNodes;
+    let characterTransform;
+    let imgSpriteSheet = new ƒ.TextureImage();
+    let imgSpriteSheetWalk = new ƒ.TextureImage();
+    let imgSpriteSheetAttack = new ƒ.TextureImage();
+    let idleCoat;
+    let walkingCoat;
+    let attackingCoat;
     Script.walkSpeed = 3;
     let deltaTime;
     Script.allowWalkRight = true;
@@ -597,6 +606,8 @@ var Script;
     function setup(_event) {
         viewport = _event.detail;
         Script.branch = viewport.getBranch();
+        loadSprites();
+        loadCharacter();
         Script.branch.addEventListener("playSound", hndPlaySound);
         Script.branch.addComponent(new fc.ComponentAudio());
         enemyNodes = Script.branch.getChildrenByName("enemies")[0].getChildrenByName("enemy_Pos");
@@ -604,12 +615,9 @@ var Script;
             let newEnemy = new Script.EnemyNode();
             enemy.appendChild(newEnemy);
         }
-        Script.characterNode = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0].getChildrenByName("Character")[0];
-        Script.characterCmp = Script.characterNode.getComponent(Script.CharacterComponent);
-        gravityCmp = Script.characterNode.getComponent(Script.GravityComponent);
         cmpCamera = viewport.camera;
         cmpCamera.mtxPivot.rotateY(180);
-        cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 40);
+        cmpCamera.mtxPivot.translation = new fc.Vector3(0, 0, 15);
         window.addEventListener("mousedown", hndAim);
         window.addEventListener("mouseup", (e) => {
             if (e.button === 2) {
@@ -629,13 +637,45 @@ var Script;
         viewport.draw();
         updateCamera();
         fc.AudioManager.default.update();
+        console.log(Script.currentAnimation);
+    }
+    function loadCharacter() {
+        loadSprites();
+        Script.characterSprite = new fcAid.NodeSprite("character");
+        Script.characterSprite.addComponent(new fc.ComponentTransform(new fc.Matrix4x4()));
+        characterTransform = Script.characterSprite.getComponent(fc.ComponentTransform);
+        characterTransform.mtxLocal.scaleX(0.5);
+        characterTransform.mtxLocal.translateY(0.5);
+        Script.currentAnimation = Script.idle;
+        Script.characterPos = Script.branch.getChildrenByName("Player")[0].getChildrenByName("character_Pos")[0];
+        Script.characterPos.appendChild(Script.characterSprite);
+        Script.characterSprite.addComponent(new Script.CharacterComponent);
+        Script.characterSprite.addComponent(new Script.GravityComponent);
+        Script.characterCmp = Script.characterSprite.getComponent(Script.CharacterComponent);
+        gravityCmp = Script.characterSprite.getComponent(Script.GravityComponent);
+        console.log(Script.characterPos);
+    }
+    async function loadSprites() {
+        await imgSpriteSheet.load("./imgs/Idle.png");
+        idleCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+        await imgSpriteSheetWalk.load("./imgs/Walk.png");
+        walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
+        await imgSpriteSheetAttack.load("./imgs/Idle.gif");
+        attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
+        Script.idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
+        Script.idle.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 10, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(27));
+        Script.walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
+        Script.walk.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 5, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(10));
+        Script.currentAnimation = Script.idle;
+        Script.characterSprite.setAnimation(Script.currentAnimation);
+        Script.characterSprite.setFrameDirection(1);
     }
     function hndPlaySound(e) {
         e.currentTarget;
         let audioComp = Script.branch.getComponent(fc.ComponentAudio);
         let inventorySound = new fc.Audio("./sounds/cloth-inventory.wav");
         let stoneSound = new fc.Audio("./sounds/stone.mp3");
-        if (e.target == Script.characterNode) {
+        if (e.target == Script.characterSprite) {
             audioComp.setAudio(inventorySound);
             audioComp.volume = 0.5;
         }
@@ -656,6 +696,8 @@ var Script;
     function controls() {
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
             if (Script.allowWalkRight) {
+                Script.currentAnimation = Script.walk;
+                Script.characterSprite.setAnimation(Script.walk);
                 Script.characterCmp.walk(1);
             }
         }
@@ -678,7 +720,7 @@ var Script;
         }
     }
     function updateCamera() {
-        let pos = Script.characterNode.getParent().mtxLocal.translation;
+        let pos = Script.characterSprite.getParent().mtxLocal.translation;
         let origin = cmpCamera.mtxPivot.translation;
         cmpCamera.mtxPivot.translation = new fc.Vector3(pos.x, pos.y, origin.z);
     }
@@ -764,14 +806,14 @@ var Script;
             Material.coat = stoneCoat;
             let stoneTransform = new fc.ComponentTransform();
             this.addComponent(stoneTransform);
-            let stoneRigid = new fc.ComponentRigidbody(5, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
+            let stoneRigid = new fc.ComponentRigidbody(10, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
             let gravityCmp = new Script.GravityComponent();
             this.addComponent(gravityCmp);
-            let characterPos = Script.characterNode.getParent().mtxWorld.translation;
-            characterPos.y += 0.5;
-            let scaleVec = new fc.Vector3(0.4, 0.3, 0.5);
-            stoneTransform.mtxLocal.translate(characterPos);
+            let characterPosTrans = Script.characterPos.mtxWorld.translation;
+            characterPosTrans.y += 0.5;
+            let scaleVec = new fc.Vector3(0.2, 0.15, 0.5);
+            stoneTransform.mtxLocal.translate(characterPosTrans);
             stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
             console.log(this.stoneDirection.x);

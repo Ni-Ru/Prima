@@ -9,8 +9,8 @@ namespace Script {
         constructor() {
             super("enemy");
             let EnemyImage: fc.TextureImage = new fc.TextureImage();
-            let Material: fc.Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
             let enemyTransform: fc.ComponentTransform = new fc.ComponentTransform();
+            let Material: fc.Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
             let enemyCoat: fc.CoatTextured = new fc.CoatTextured(undefined, EnemyImage);
             let gravityCmp: GravityComponent = new GravityComponent();
             let stateMachine: EnemyStateMachine = new EnemyStateMachine();
@@ -29,5 +29,7 @@ namespace Script {
             cmpMat.material = Material;
             new fc.CoatTextured()
         }
+
+
     }
 }

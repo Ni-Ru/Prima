@@ -573,15 +573,7 @@
                       }
                     ]
                   },
-                  "children": [
-                    {
-                      "ƒ.GraphInstance": {
-                        "deserializeFromSource": true,
-                        "name": "Character",
-                        "idSource": "Graph|2023-01-07T14:43:21.981Z|38454"
-                      }
-                    }
-                  ]
+                  "children": []
                 }
               }
             ]
@@ -988,8 +980,7 @@
               }
             }
           }
-        ],
-        "EnemyStateMachine": []
+        ]
       },
       "children": [],
       "idResource": "Graph|2023-02-09T13:31:19.023Z|82062",

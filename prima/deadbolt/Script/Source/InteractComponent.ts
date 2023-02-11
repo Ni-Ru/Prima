@@ -80,7 +80,7 @@ namespace Script {
     }
 
     checkPlayerPos(){
-      let playerPos: fc.Vector3 = characterNode.getParent().mtxLocal.translation;
+      let playerPos: fc.Vector3 = characterPos.mtxLocal.translation;
       let interactablePos: fc.Vector3 = this.node.getParent().mtxLocal.translation;
       if(Math.abs(playerPos.x - interactablePos.x) < 1){
         this.showInteract();
