@@ -39,7 +39,7 @@ namespace Script {
 
   let spacePressed: boolean = false;
 
-  document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
+  document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
    function start(_event: CustomEvent) {
     fetchData()
