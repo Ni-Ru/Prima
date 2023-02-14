@@ -82,6 +82,7 @@ namespace Script {
     window.addEventListener("mousedown", hndAim);
     window.addEventListener("mouseup", (e) => {
       if (e.button === 2){
+        window.removeEventListener("click", characterCmp.hndThrow);
         document.body.style.cursor = "default";
       }
     });
@@ -100,7 +101,6 @@ namespace Script {
     viewport.draw();
     updateCamera();
     fc.AudioManager.default.update();
-    console.log(currentAnimation)
   }
 
 

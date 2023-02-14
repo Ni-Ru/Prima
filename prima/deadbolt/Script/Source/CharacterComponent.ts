@@ -4,6 +4,7 @@ namespace Script {
 
   export let xSpeed = 0;
 
+  let directionRight: boolean = true;
   
   export let usedStairs: boolean = false;
   
@@ -30,7 +31,6 @@ namespace Script {
 
 
     public walkSpeed: number = 0;
-    private characterPos: fc.Node;
 
 
     // Activate the functions of this component as response to events
@@ -43,7 +43,6 @@ namespace Script {
           this.removeEventListener(fc.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case fc.EVENT.NODE_DESERIALIZED:
-          this.characterPos = this.node.getParent();
 
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
@@ -56,6 +55,17 @@ namespace Script {
 
     walk(direction: number) {
       xSpeed = walkSpeed * direction;
+      if(direction > 0){
+        if(!directionRight){
+          this.node.mtxLocal.rotateY(180);
+        }
+        directionRight = true;
+      }else if(direction < 0){
+        if(directionRight){
+          this.node.mtxLocal.rotateY(180);
+        }
+        directionRight = false;
+      }
       
     }
 

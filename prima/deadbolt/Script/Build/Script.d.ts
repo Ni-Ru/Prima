@@ -7,7 +7,6 @@ declare namespace Script {
         static readonly iSubclass: number;
         constructor();
         walkSpeed: number;
-        private characterPos;
         hndEvent: (_event: Event) => void;
         update(deltaTime: number): void;
         walk(direction: number): void;

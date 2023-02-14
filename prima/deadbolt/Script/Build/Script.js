@@ -4,6 +4,7 @@ var Script;
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     Script.xSpeed = 0;
+    let directionRight = true;
     Script.usedStairs = false;
     Script.weapon = "knife";
     class CharacterComponent extends fc.ComponentScript {
@@ -21,7 +22,6 @@ var Script;
             this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
         }
         walkSpeed = 0;
-        characterPos;
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -32,7 +32,6 @@ var Script;
                     this.removeEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* NODE_DESERIALIZED */:
-                    this.characterPos = this.node.getParent();
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
@@ -42,6 +41,18 @@ var Script;
         }
         walk(direction) {
             Script.xSpeed = Script.walkSpeed * direction;
+            if (direction > 0) {
+                if (!directionRight) {
+                    this.node.mtxLocal.rotateY(180);
+                }
+                directionRight = true;
+            }
+            else if (direction < 0) {
+                if (directionRight) {
+                    this.node.mtxLocal.rotateY(180);
+                }
+                directionRight = false;
+            }
         }
         useStairs(exit) {
             Script.characterPos.mtxLocal.translateY(exit);
@@ -621,6 +632,7 @@ var Script;
         window.addEventListener("mousedown", hndAim);
         window.addEventListener("mouseup", (e) => {
             if (e.button === 2) {
+                window.removeEventListener("click", Script.characterCmp.hndThrow);
                 document.body.style.cursor = "default";
             }
         });
@@ -637,7 +649,6 @@ var Script;
         viewport.draw();
         updateCamera();
         fc.AudioManager.default.update();
-        console.log(Script.currentAnimation);
     }
     function loadCharacter() {
         loadSprites();
@@ -816,7 +827,6 @@ var Script;
             stoneTransform.mtxLocal.translate(characterPosTrans);
             stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
-            console.log(this.stoneDirection.x);
             let forceVector = new fc.Vector3(1000, 1000, 0);
             forceVector.x = this.stoneDirection.x;
             forceVector.y = -this.stoneDirection.y;

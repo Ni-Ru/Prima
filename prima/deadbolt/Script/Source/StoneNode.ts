@@ -36,7 +36,6 @@ namespace Script {
             stoneTransform.mtxLocal.translate(characterPosTrans);
             stoneTransform.mtxLocal.translateZ(0.1);
             stoneTransform.mtxLocal.scale(scaleVec);
-            console.log(this.stoneDirection.x);
 
             let forceVector: fc.Vector3 = new fc.Vector3(1000, 1000, 0);
             forceVector.x = this.stoneDirection.x;
