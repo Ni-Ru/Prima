@@ -1,6 +1,6 @@
 namespace Script {
   import fc = FudgeCore;
-  import fcAid = FudgeAid;
+  import fcAid = FudgeAid
 
   let viewport: fc.Viewport;
   
@@ -25,7 +25,6 @@ namespace Script {
   export let idle: ƒAid.SpriteSheetAnimation;
   export let walk: ƒAid.SpriteSheetAnimation;
   export let attack: ƒAid.SpriteSheetAnimation;
-  export let currentAnimation: ƒAid.SpriteSheetAnimation;
 
 
   export let gameState: GameState;
@@ -135,14 +134,18 @@ namespace Script {
     attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
 
     idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
-    idle.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 10,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(27));
+    idle.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 5,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
 
     walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
-    walk.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 5,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(10));
+    walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 8, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+    characterSprite.mtxLocal.translateY(0.12);
+    characterSprite.mtxLocal.scaleX(1.3)
+    console.log(walk);
 
     currentAnimation = idle;
     characterSprite.setAnimation(currentAnimation);
     characterSprite.setFrameDirection(1);
+    characterSprite.framerate = 12;
   }
 
 
@@ -161,28 +164,20 @@ namespace Script {
       audioComp.play(true);
   }
 
-  function hndAim(e: MouseEvent): void{
-    if(weapon === "stones"){ 
-      if(e.button === 2){
-        document.body.style.cursor ="crosshair";
-        window.addEventListener("click",characterCmp.hndThrow);
-      }
-    }
-  }
-
   function controls(){
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])){
         if(allowWalkRight){
-          currentAnimation=walk;
-          characterSprite.setAnimation(walk);
-          characterCmp.walk(1)
+          characterCmp.setSprite(walk);
+          characterCmp.walk(1);
         }
       }else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])){
         if(allowWalkLeft){
-          characterCmp.walk(-1)
+          characterCmp.setSprite(walk);
+          characterCmp.walk(-1);
         }
       }else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])){
-        characterCmp.walk(0)
+        characterCmp.setSprite(idle)
+        characterCmp.walk(0);
       }
       
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])){
@@ -193,6 +188,16 @@ namespace Script {
       }else{
         spacePressed = false;
       }
+  }
+
+  
+  function hndAim(e: MouseEvent): void{
+    if(weapon === "stones"){ 
+      if(e.button === 2){
+        document.body.style.cursor ="crosshair";
+        window.addEventListener("click", characterCmp.hndThrow);
+      }
+    }
   }
 
   function updateCamera(): void {

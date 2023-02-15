@@ -1,5 +1,6 @@
 namespace Script {
   import fc = FudgeCore;
+  import fcAid = FudgeAid;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
   export let xSpeed = 0;
@@ -9,6 +10,8 @@ namespace Script {
   export let usedStairs: boolean = false;
   
   export let weapon: String = "knife";
+
+  export let currentAnimation: ƒAid.SpriteSheetAnimation;
 
   export class CharacterComponent extends fc.ComponentScript {
 
@@ -91,6 +94,7 @@ namespace Script {
     }
 
     hndThrow(e: MouseEvent): void{
+      console.log("hi");
       if(weapon === "stones" && gameState.stones > 0){
         let vctMouse: fc.Vector2 = new fc.Vector2();
         vctMouse.x = 2 * (e.clientX / window.innerWidth) -1;
@@ -102,6 +106,15 @@ namespace Script {
         gameState.stoneAmount(gameState.stones, true);
       }
 
+    }
+
+    setSprite( sprite: fcAid.SpriteSheetAnimation){
+      if (currentAnimation !== sprite){
+        characterSprite.showFrame(0);
+        characterSprite.setAnimation(sprite);
+        characterSprite.framerate = 12;
+        currentAnimation=sprite;
+      }
     }
 
 

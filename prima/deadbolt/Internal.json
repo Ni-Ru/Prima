@@ -776,7 +776,7 @@
                 {
                   "ƒ.ComponentMaterial": {
                     "sortForAlpha": false,
-                    "clrPrimary": "[0.11764705882352941, 0, 1, 1]",
+                    "clrPrimary": "[1, 1, 1, 1]",
                     "clrSecondary": "[1, 1, 1, 1]",
                     "pivot": {
                       "translation": "[0, 0]",
@@ -786,7 +786,7 @@
                     "Component": {
                       "active": true
                     },
-                    "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                    "idMaterial": "Material|2023-02-15T13:03:03.719Z|90009"
                   }
                 }
               ],
@@ -813,6 +813,30 @@
       "type": "Graph"
     }
   },
+  "Material|2023-02-14T21:34:07.972Z|03293": {
+    "ƒ.Material": {
+      "name": "Stairs",
+      "idResource": "Material|2023-02-14T21:34:07.972Z|03293",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2023-02-14T21:33:48.078Z|51085"
+        }
+      }
+    }
+  },
+  "TextureImage|2023-02-14T21:33:48.078Z|51085": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\Stairs.gif",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-14T21:33:48.078Z|51085",
+        "name": "imgs\\Stairs.gif",
+        "mipmap": "CRISP"
+      }
+    }
+  },
   "Graph|2023-02-05T01:20:59.798Z|88819": {
     "ƒ.Graph": {
       "name": "Stair",
@@ -825,7 +849,7 @@
               "pivot": {
                 "translation": "[0, 0, 0]",
                 "rotation": "[0, 0, 0]",
-                "scaling": "[2.200000047683716, 2.200000047683716, 1]"
+                "scaling": "[0.800000011920929, 1.3000000715255737, 1]"
               },
               "Component": {
                 "active": true
@@ -855,7 +879,7 @@
           {
             "ƒ.ComponentTransform": {
               "local": {
-                "translation": "[0, 1, -0.14999999105930328]",
+                "translation": "[0, 0.5, -0.14999999105930328]",
                 "rotation": "[0, 0, 0]",
                 "scaling": "[1, 1, 1]"
               },
@@ -894,7 +918,7 @@
                     "pivot": {
                       "translation": "[0, 0, 0.009999999776482582]",
                       "rotation": "[0, 0, 0]",
-                      "scaling": "[2, 2, 1]"
+                      "scaling": "[0.699999988079071, 1.2000000476837158, 1]"
                     },
                     "Component": {
                       "active": true
@@ -906,7 +930,7 @@
                 {
                   "ƒ.ComponentMaterial": {
                     "sortForAlpha": false,
-                    "clrPrimary": "[0, 1, 0, 1]",
+                    "clrPrimary": "[1, 1, 1, 1]",
                     "clrSecondary": "[1, 1, 1, 1]",
                     "pivot": {
                       "translation": "[0, 0]",
@@ -916,7 +940,7 @@
                     "Component": {
                       "active": true
                     },
-                    "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                    "idMaterial": "Material|2023-02-14T21:34:07.972Z|03293"
                   }
                 }
               ]
@@ -987,27 +1011,27 @@
       "type": "Graph"
     }
   },
-  "TextureImage|2023-02-09T14:51:27.177Z|11834": {
-    "ƒ.TextureImage": {
-      "url": "imgs\\enemySprite.gif",
-      "type": "TextureImage",
-      "Texture": {
-        "idResource": "TextureImage|2023-02-09T14:51:27.177Z|11834",
-        "name": "imgs\\enemySprite.gif",
-        "mipmap": "CRISP"
-      }
-    }
-  },
-  "Material|2023-02-09T14:51:39.484Z|18341": {
+  "Material|2023-02-15T13:03:03.719Z|90009": {
     "ƒ.Material": {
-      "name": "ShaderLitTextured",
-      "idResource": "Material|2023-02-09T14:51:39.484Z|18341",
+      "name": "closedDoor",
+      "idResource": "Material|2023-02-15T13:03:03.719Z|90009",
       "shader": "ShaderLitTextured",
       "coat": {
         "ƒ.CoatTextured": {
           "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2023-02-09T14:51:27.177Z|11834"
+          "idTexture": "TextureImage|2023-02-15T13:03:16.097Z|69726"
         }
+      }
+    }
+  },
+  "TextureImage|2023-02-15T13:03:16.097Z|69726": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\closedDoor.gif",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-15T13:03:16.097Z|69726",
+        "name": "imgs\\closedDoor.gif",
+        "mipmap": "CRISP"
       }
     }
   }

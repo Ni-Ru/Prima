@@ -73,6 +73,7 @@ var Script;
             }
         }
         hndThrow(e) {
+            console.log("hi");
             if (Script.weapon === "stones" && Script.gameState.stones > 0) {
                 let vctMouse = new fc.Vector2();
                 vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
@@ -82,6 +83,14 @@ var Script;
                 items.addChild(newStone);
                 Script.gameState.stones -= 1;
                 Script.gameState.stoneAmount(Script.gameState.stones, true);
+            }
+        }
+        setSprite(sprite) {
+            if (Script.currentAnimation !== sprite) {
+                Script.characterSprite.showFrame(0);
+                Script.characterSprite.setAnimation(sprite);
+                Script.characterSprite.framerate = 12;
+                Script.currentAnimation = sprite;
             }
         }
     }
@@ -174,17 +183,39 @@ var Script;
                     break;
             }
         }
+        loadTextures(closed) {
+            let openDoorImage = new fc.TextureImage();
+            let closedDoorImage = new fc.TextureImage();
+            let openMaterial = new fc.Material("openDoorMat", fc.ShaderLitTextured);
+            let openDoorCoat = new fc.CoatTextured(undefined, openDoorImage);
+            let closedDoorCoat = new fc.CoatTextured(undefined, closedDoorImage);
+            openDoorImage.load("./imgs/openDoor.gif");
+            closedDoorImage.load("./imgs/closedDoor.gif");
+            if (closed) {
+                console.log("open");
+                openMaterial.coat = closedDoorCoat;
+            }
+            else {
+                console.log("close");
+                openMaterial.coat = openDoorCoat;
+            }
+            let cmpTextureNode = this.node.getChildrenByName("DoorTexture")[0];
+            let cmpMat = cmpTextureNode.getComponent(fc.ComponentMaterial);
+            cmpMat.material = openMaterial;
+        }
         openDoor() {
             doorRigidBody.activate(false);
             doorTransform.mtxLocal.translateX(0.25);
             doorTransform.mtxLocal.scaleX(3);
             doorTransform.mtxLocal.translateZ(-0.1);
+            this.loadTextures(false);
         }
         closeDoor() {
             doorRigidBody.activate(true);
             doorTransform.mtxLocal.scaleX(1 / 3);
             doorTransform.mtxLocal.translateX(-0.25);
             doorTransform.mtxLocal.translateZ(0.1);
+            this.loadTextures(true);
         }
     }
     Script.DoorComponent = DoorComponent;
@@ -674,12 +705,16 @@ var Script;
         await imgSpriteSheetAttack.load("./imgs/Idle.gif");
         attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
         Script.idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
-        Script.idle.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 10, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(27));
+        Script.idle.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 5, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
-        Script.walk.generateByGrid(ƒ.Rectangle.GET(5, 3, 60, 120), 5, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(10));
+        Script.walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 8, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+        Script.characterSprite.mtxLocal.translateY(0.12);
+        Script.characterSprite.mtxLocal.scaleX(1.3);
+        console.log(Script.walk);
         Script.currentAnimation = Script.idle;
         Script.characterSprite.setAnimation(Script.currentAnimation);
         Script.characterSprite.setFrameDirection(1);
+        Script.characterSprite.framerate = 12;
     }
     function hndPlaySound(e) {
         e.currentTarget;
@@ -696,28 +731,21 @@ var Script;
         }
         audioComp.play(true);
     }
-    function hndAim(e) {
-        if (Script.weapon === "stones") {
-            if (e.button === 2) {
-                document.body.style.cursor = "crosshair";
-                window.addEventListener("click", Script.characterCmp.hndThrow);
-            }
-        }
-    }
     function controls() {
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
             if (Script.allowWalkRight) {
-                Script.currentAnimation = Script.walk;
-                Script.characterSprite.setAnimation(Script.walk);
+                Script.characterCmp.setSprite(Script.walk);
                 Script.characterCmp.walk(1);
             }
         }
         else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])) {
             if (Script.allowWalkLeft) {
+                Script.characterCmp.setSprite(Script.walk);
                 Script.characterCmp.walk(-1);
             }
         }
         else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
+            Script.characterCmp.setSprite(Script.idle);
             Script.characterCmp.walk(0);
         }
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])) {
@@ -728,6 +756,14 @@ var Script;
         }
         else {
             spacePressed = false;
+        }
+    }
+    function hndAim(e) {
+        if (Script.weapon === "stones") {
+            if (e.button === 2) {
+                document.body.style.cursor = "crosshair";
+                window.addEventListener("click", Script.characterCmp.hndThrow);
+            }
         }
     }
     function updateCamera() {

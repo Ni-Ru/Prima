@@ -57,11 +57,34 @@ namespace Script {
       }
     }
 
+    loadTextures(closed: Boolean){
+      let openDoorImage: fc.TextureImage = new fc.TextureImage();
+      let closedDoorImage: fc.TextureImage = new fc.TextureImage();
+      let openMaterial: fc.Material = new fc.Material("openDoorMat", fc.ShaderLitTextured);
+      let openDoorCoat: fc.CoatTextured = new fc.CoatTextured(undefined, openDoorImage);
+      let closedDoorCoat: fc.CoatTextured = new fc.CoatTextured(undefined, closedDoorImage);
+      
+      openDoorImage.load("./imgs/openDoor.gif");
+      closedDoorImage.load("./imgs/closedDoor.gif");
+      if(closed){
+        console.log("open")
+        openMaterial.coat = closedDoorCoat;
+      }else{
+        console.log("close")
+        openMaterial.coat = openDoorCoat;
+      }
+
+      let cmpTextureNode: fc.Node = this.node.getChildrenByName("DoorTexture")[0];
+      let cmpMat: fc.ComponentMaterial = cmpTextureNode.getComponent(fc.ComponentMaterial);
+      cmpMat.material = openMaterial;
+    }
+
     openDoor(){
       doorRigidBody.activate(false)
       doorTransform.mtxLocal.translateX(0.25);
       doorTransform.mtxLocal.scaleX(3);
       doorTransform.mtxLocal.translateZ(-0.1);
+      this.loadTextures(false);
     }
 
     closeDoor(){
@@ -69,6 +92,7 @@ namespace Script {
       doorTransform.mtxLocal.scaleX(1/3);
       doorTransform.mtxLocal.translateX(-0.25);
       doorTransform.mtxLocal.translateZ(0.1);
+      this.loadTextures(true);
     }
 
     // protected reduceMutator(_mutator: ƒ.Mutator): void {

@@ -1,8 +1,10 @@
 declare namespace Script {
     import fc = FudgeCore;
+    import fcAid = FudgeAid;
     let xSpeed: number;
     let usedStairs: boolean;
     let weapon: String;
+    let currentAnimation: ƒAid.SpriteSheetAnimation;
     class CharacterComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
@@ -13,6 +15,7 @@ declare namespace Script {
         useStairs(exit: number): void;
         changeWeapon(): void;
         hndThrow(e: MouseEvent): void;
+        setSprite(sprite: fcAid.SpriteSheetAnimation): void;
     }
 }
 declare namespace Script {
@@ -32,6 +35,7 @@ declare namespace Script {
         constructor();
         hndEvent: (_event: Event) => void;
         interaction(): void;
+        loadTextures(closed: Boolean): void;
         openDoor(): void;
         closeDoor(): void;
     }
@@ -123,7 +127,6 @@ declare namespace Script {
     let idle: ƒAid.SpriteSheetAnimation;
     let walk: ƒAid.SpriteSheetAnimation;
     let attack: ƒAid.SpriteSheetAnimation;
-    let currentAnimation: ƒAid.SpriteSheetAnimation;
     let gameState: GameState;
     const walkSpeed: number;
     let allowWalkRight: boolean;
