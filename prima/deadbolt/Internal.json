@@ -616,7 +616,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[2.6000001430511475, 0, 0]",
+                                  "translation": "[2.6000001430511475, 0, -0.04999999701976776]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -670,6 +670,99 @@
                             "translation": "[0, 0, 0]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Background",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "sky",
+                  "active": true,
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                          "pivot": {
+                            "translation": "[25, 0, -1]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[80, 40, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-16T15:17:36.924Z|11530"
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "wall",
+                  "active": true,
+                  "components": {
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-16T15:20:31.751Z|88517"
+                        }
+                      }
+                    ],
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                          "pivot": {
+                            "translation": "[10.09999942779541, 1.399999976158142, -0.07999999821186066]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[15, 2.8999998569488525, 1]"
                           },
                           "Component": {
                             "active": true
@@ -1008,7 +1101,7 @@
           {
             "ƒ.ComponentTransform": {
               "local": {
-                "translation": "[0, 0.5, -0.14999999105930328]",
+                "translation": "[0, 0.5, -0.049999989569187164]",
                 "rotation": "[0, 0, 0]",
                 "scaling": "[1, 1, 1]"
               },
@@ -1182,7 +1275,7 @@
           {
             "ƒ.ComponentTransform": {
               "local": {
-                "translation": "[0, 0.5, -0.15000000596046448]",
+                "translation": "[0, 0.5, -0.05000000447034836]",
                 "rotation": "[0, 0, 0]",
                 "scaling": "[1, 1, 1]"
               },
@@ -1276,6 +1369,54 @@
       "Texture": {
         "idResource": "TextureImage|2023-02-16T15:02:17.259Z|18933",
         "name": "imgs\\stairUp.gif",
+        "mipmap": "CRISP"
+      }
+    }
+  },
+  "Material|2023-02-16T15:17:36.924Z|11530": {
+    "ƒ.Material": {
+      "name": "sky",
+      "idResource": "Material|2023-02-16T15:17:36.924Z|11530",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2023-02-16T15:17:45.207Z|62821"
+        }
+      }
+    }
+  },
+  "TextureImage|2023-02-16T15:17:45.207Z|62821": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\sky.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-16T15:17:45.207Z|62821",
+        "name": "imgs\\sky.png",
+        "mipmap": "CRISP"
+      }
+    }
+  },
+  "Material|2023-02-16T15:20:31.751Z|88517": {
+    "ƒ.Material": {
+      "name": "wall",
+      "idResource": "Material|2023-02-16T15:20:31.751Z|88517",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2023-02-16T15:20:39.501Z|32473"
+        }
+      }
+    }
+  },
+  "TextureImage|2023-02-16T15:20:39.501Z|32473": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\wall.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-16T15:20:39.501Z|32473",
+        "name": "imgs\\wall.png",
         "mipmap": "CRISP"
       }
     }

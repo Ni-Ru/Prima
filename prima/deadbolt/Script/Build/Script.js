@@ -207,14 +207,12 @@ var Script;
             doorRigidBody.activate(false);
             doorTransform.mtxLocal.translateX(0.25);
             doorTransform.mtxLocal.scaleX(3);
-            doorTransform.mtxLocal.translateZ(-0.1);
             this.loadTextures(false);
         }
         closeDoor() {
             doorRigidBody.activate(true);
             doorTransform.mtxLocal.scaleX(1 / 3);
             doorTransform.mtxLocal.translateX(-0.25);
-            doorTransform.mtxLocal.translateZ(0.1);
             this.loadTextures(true);
         }
     }
