@@ -923,111 +923,6 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[22.400001525878906, 0, 0]",
-                                  "rotation": "[0, 0, 0]",
-                                  "scaling": "[1, 1, 1]"
-                                },
-                                "Component": {
-                                  "active": true
-                                }
-                              }
-                            }
-                          ]
-                        },
-                        "children": [
-                          {
-                            "ƒ.Node": {
-                              "name": "Wall",
-                              "active": true,
-                              "components": {
-                                "ComponentMaterial": [
-                                  {
-                                    "ƒ.ComponentMaterial": {
-                                      "sortForAlpha": false,
-                                      "clrPrimary": "[1, 1, 1, 1]",
-                                      "clrSecondary": "[1, 1, 1, 1]",
-                                      "pivot": {
-                                        "translation": "[0, 0]",
-                                        "rotation": 0,
-                                        "scaling": "[1, 1]"
-                                      },
-                                      "Component": {
-                                        "active": true
-                                      },
-                                      "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
-                                    }
-                                  }
-                                ],
-                                "ComponentMesh": [
-                                  {
-                                    "ƒ.ComponentMesh": {
-                                      "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
-                                      "pivot": {
-                                        "translation": "[0, 0, 0]",
-                                        "rotation": "[0, 0, 0]",
-                                        "scaling": "[0.20000001788139343, 3, 1]"
-                                      },
-                                      "Component": {
-                                        "active": true
-                                      }
-                                    }
-                                  }
-                                ],
-                                "ComponentTransform": [
-                                  {
-                                    "ƒ.ComponentTransform": {
-                                      "local": {
-                                        "translation": "[0, 1.5, 0]",
-                                        "rotation": "[0, 0, 0]",
-                                        "scaling": "[1, 1, 1]"
-                                      },
-                                      "Component": {
-                                        "active": true
-                                      }
-                                    }
-                                  }
-                                ],
-                                "ComponentRigidbody": [
-                                  {
-                                    "ƒ.ComponentRigidbody": {
-                                      "initialization": "TO_PIVOT",
-                                      "friction": 0.2,
-                                      "restitution": 0.2,
-                                      "mass": 1,
-                                      "dampTranslation": 0.1,
-                                      "dampRotation": 0.1,
-                                      "effectGravity": 1,
-                                      "typeBody": "STATIC",
-                                      "typeCollider": "CUBE",
-                                      "isTrigger": false,
-                                      "id": 0,
-                                      "pivot": {
-                                        "translation": "[0, 0, 0]",
-                                        "rotation": "[0, 0, 0]",
-                                        "scaling": "[0.20000000298023224, 3, 1]"
-                                      },
-                                      "Component": {
-                                        "active": true
-                                      }
-                                    }
-                                  }
-                                ]
-                              },
-                              "children": []
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "ƒ.Node": {
-                        "name": "wall_Pos",
-                        "active": true,
-                        "components": {
-                          "ComponentTransform": [
-                            {
-                              "ƒ.ComponentTransform": {
-                                "local": {
                                   "translation": "[2.6000001430511475, 5.299999713897705, 0]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
@@ -1648,6 +1543,111 @@
                           }
                         ]
                       }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "wall_Pos",
+                        "active": true,
+                        "components": {
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[22.399999618530273, 2.0999999046325684, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": [
+                          {
+                            "ƒ.Node": {
+                              "name": "Wall",
+                              "active": true,
+                              "components": {
+                                "ComponentMaterial": [
+                                  {
+                                    "ƒ.ComponentMaterial": {
+                                      "sortForAlpha": false,
+                                      "clrPrimary": "[1, 1, 1, 1]",
+                                      "clrSecondary": "[1, 1, 1, 1]",
+                                      "pivot": {
+                                        "translation": "[0, 0]",
+                                        "rotation": 0,
+                                        "scaling": "[1, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      },
+                                      "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                                    }
+                                  }
+                                ],
+                                "ComponentMesh": [
+                                  {
+                                    "ƒ.ComponentMesh": {
+                                      "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                                      "pivot": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[0.20000001788139343, 1.7999999523162842, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ],
+                                "ComponentTransform": [
+                                  {
+                                    "ƒ.ComponentTransform": {
+                                      "local": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[1, 1, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ],
+                                "ComponentRigidbody": [
+                                  {
+                                    "ƒ.ComponentRigidbody": {
+                                      "initialization": "TO_PIVOT",
+                                      "friction": 0.2,
+                                      "restitution": 0.2,
+                                      "mass": 1,
+                                      "dampTranslation": 0.1,
+                                      "dampRotation": 0.1,
+                                      "effectGravity": 1,
+                                      "typeBody": "STATIC",
+                                      "typeCollider": "CUBE",
+                                      "isTrigger": false,
+                                      "id": 0,
+                                      "pivot": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[0.20000000298023224, 1.8000000715255737, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "children": []
+                            }
+                          }
+                        ]
+                      }
                     }
                   ]
                 }
@@ -1739,6 +1739,37 @@
                               "ƒ.ComponentTransform": {
                                 "local": {
                                   "translation": "[2.6000001430511475, 0, -0.04999999701976776]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": [
+                          {
+                            "ƒ.GraphInstance": {
+                              "deserializeFromSource": true,
+                              "name": "Door",
+                              "idSource": "Graph|2023-02-04T00:32:10.829Z|44980"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "door_Pos",
+                        "active": true,
+                        "components": {
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[22.399999618530273, 0, -0.04999999701976776]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },

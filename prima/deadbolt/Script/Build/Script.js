@@ -767,7 +767,7 @@ var Script;
     function updateCamera() {
         let pos = Script.characterSprite.getParent().mtxLocal.translation;
         let origin = cmpCamera.mtxPivot.translation;
-        cmpCamera.mtxPivot.translation = new fc.Vector3(pos.x, pos.y, origin.z);
+        cmpCamera.mtxPivot.translation = new fc.Vector3(pos.x, pos.y + 1, origin.z);
     }
 })(Script || (Script = {}));
 var Script;
