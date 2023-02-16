@@ -1,9 +1,7 @@
 namespace Script {
   import fc = FudgeCore;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
-
-  export let openDoor: boolean = false;
-  let doorTransform: fc.ComponentTransform
+  let doorTransform: fc.ComponentTransform;
   let doorRigidBody: fc.ComponentRigidbody;
 
   export class DoorComponent extends fc.ComponentScript {
@@ -25,6 +23,8 @@ namespace Script {
       this.addEventListener(fc.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
+    private openDoorVar: boolean = false;
+
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
@@ -40,17 +40,22 @@ namespace Script {
       }
     }
 
+    getOpenDoorVar(): boolean{
+      return this.openDoorVar;
+    }
+
     interaction(){
       doorTransform = this.node.getComponent(fc.ComponentTransform);
       doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
-      switch (openDoor){
+      console.log(this.openDoor);
+      switch (this.openDoorVar){
         case true:
           this.closeDoor();
-          openDoor = false;
+          this.openDoorVar = false;
           break;
         case false:
           this.openDoor()
-          openDoor = true;
+          this.openDoorVar = true;
           allowWalkLeft = true;
           allowWalkRight = true;
           break;  

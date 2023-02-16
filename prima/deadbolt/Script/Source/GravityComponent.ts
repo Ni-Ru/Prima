@@ -101,13 +101,10 @@ namespace Script {
                   switch(obstacle.name){
                     case "door_Pos":
                       interactCmp.update();
-                      if(!openDoor){
-                        this.wallCollission();
-                      }
                       break;
 
                     case "stair_Pos":
-                      interactCmp.update();
+                        interactCmp.update();
                       break;
 
                     default:

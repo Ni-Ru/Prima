@@ -61,19 +61,20 @@ var Script;
             this.node.dispatchEvent(new Event("playSound", { bubbles: true }));
             if (Script.weapon === "knife") {
                 Script.weapon = "stones";
+                window.removeEventListener("click", Script.hndAttack);
                 document.getElementById("knife").removeAttribute("class");
                 document.getElementById("stones").setAttribute("class", "selected");
                 document.getElementById("stoneImgs").setAttribute("class", "selected");
             }
             else {
                 Script.weapon = "knife";
+                window.addEventListener("click", Script.hndAttack);
                 document.getElementById("stones").removeAttribute("class");
                 document.getElementById("stoneImgs").removeAttribute("class");
                 document.getElementById("knife").setAttribute("class", "selected");
             }
         }
         hndThrow(e) {
-            console.log("hi");
             if (Script.weapon === "stones" && Script.gameState.stones > 0) {
                 let vctMouse = new fc.Vector2();
                 vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
@@ -137,7 +138,6 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
-    Script.openDoor = false;
     let doorTransform;
     let doorRigidBody;
     class DoorComponent extends fc.ComponentScript {
@@ -153,6 +153,7 @@ var Script;
             this.addEventListener("componentRemove" /* COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* NODE_DESERIALIZED */, this.hndEvent);
         }
+        openDoorVar = false;
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -167,17 +168,21 @@ var Script;
                     break;
             }
         };
+        getOpenDoorVar() {
+            return this.openDoorVar;
+        }
         interaction() {
             doorTransform = this.node.getComponent(fc.ComponentTransform);
             doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
-            switch (Script.openDoor) {
+            console.log(this.openDoor);
+            switch (this.openDoorVar) {
                 case true:
                     this.closeDoor();
-                    Script.openDoor = false;
+                    this.openDoorVar = false;
                     break;
                 case false:
                     this.openDoor();
-                    Script.openDoor = true;
+                    this.openDoorVar = true;
                     Script.allowWalkLeft = true;
                     Script.allowWalkRight = true;
                     break;
@@ -479,9 +484,6 @@ var Script;
                                     switch (obstacle.name) {
                                         case "door_Pos":
                                             interactCmp.update();
-                                            if (!Script.openDoor) {
-                                                this.wallCollission();
-                                            }
                                             break;
                                         case "stair_Pos":
                                             interactCmp.update();
@@ -563,11 +565,11 @@ var Script;
             }
         };
         update() {
+            DoorCmp = this.node.getComponent(Script.DoorComponent);
+            StairCmp = this.node.getComponent(Script.StairComponent);
             this.checkPlayerPos();
         }
         actionControls() {
-            DoorCmp = this.node.getComponent(Script.DoorComponent);
-            StairCmp = this.node.getComponent(Script.StairComponent);
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])) {
                 if (!this.keyEPressed) {
                     this.keyEPressed = true;
@@ -591,6 +593,11 @@ var Script;
         }
         showInteract() {
             this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+            if (DoorCmp) {
+                if (!DoorCmp.getOpenDoorVar()) {
+                    Script.gravityCmp.wallCollission();
+                }
+            }
         }
         noInteract() {
             this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
@@ -598,12 +605,23 @@ var Script;
         checkPlayerPos() {
             let playerPos = Script.characterPos.mtxLocal.translation;
             let interactablePos = this.node.getParent().mtxLocal.translation;
-            if (Math.abs(playerPos.x - interactablePos.x) < 1) {
-                this.showInteract();
-                this.actionControls();
+            if (StairCmp) {
+                if (Math.abs(playerPos.x - interactablePos.x) < 0.3) {
+                    this.showInteract();
+                    this.actionControls();
+                }
+                else {
+                    this.noInteract();
+                }
             }
             else {
-                this.noInteract();
+                if (Math.abs(playerPos.x - interactablePos.x) < 1) {
+                    this.showInteract();
+                    this.actionControls();
+                }
+                else {
+                    this.noInteract();
+                }
             }
         }
     }
@@ -615,7 +633,6 @@ var Script;
     var fcAid = FudgeAid;
     let viewport;
     let cmpCamera;
-    let gravityCmp;
     let enemyNodes;
     let characterTransform;
     let imgSpriteSheet = new ƒ.TextureImage();
@@ -628,6 +645,7 @@ var Script;
     let deltaTime;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
+    Script.attackingMotion = false;
     let config;
     let spacePressed = false;
     document.addEventListener("interactiveViewportStarted", start);
@@ -668,11 +686,12 @@ var Script;
         window.addEventListener("contextmenu", (e) => {
             e.preventDefault();
         });
+        window.addEventListener("click", hndAttack);
     }
     function update(_event) {
         deltaTime = fc.Loop.timeFrameGame / 1000;
         Script.characterCmp.update(deltaTime);
-        gravityCmp.update(deltaTime);
+        Script.gravityCmp.update(deltaTime);
         controls();
         fc.Physics.simulate(); // if physics is included and used
         viewport.draw();
@@ -692,7 +711,7 @@ var Script;
         Script.characterSprite.addComponent(new Script.CharacterComponent);
         Script.characterSprite.addComponent(new Script.GravityComponent);
         Script.characterCmp = Script.characterSprite.getComponent(Script.CharacterComponent);
-        gravityCmp = Script.characterSprite.getComponent(Script.GravityComponent);
+        Script.gravityCmp = Script.characterSprite.getComponent(Script.GravityComponent);
         console.log(Script.characterPos);
     }
     async function loadSprites() {
@@ -700,12 +719,14 @@ var Script;
         idleCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         await imgSpriteSheetWalk.load("./imgs/Walk.png");
         walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
-        await imgSpriteSheetAttack.load("./imgs/Idle.gif");
+        await imgSpriteSheetAttack.load("./imgs/Attack.png");
         attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
         Script.idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
         Script.idle.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 5, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
         Script.walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 8, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+        Script.attack = new fcAid.SpriteSheetAnimation("Attack", attackingCoat);
+        Script.attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.characterSprite.mtxLocal.translateY(0.12);
         Script.characterSprite.mtxLocal.scaleX(1.3);
         console.log(Script.walk);
@@ -743,7 +764,9 @@ var Script;
             }
         }
         else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
-            Script.characterCmp.setSprite(Script.idle);
+            if (!Script.attackingMotion) {
+                Script.characterCmp.setSprite(Script.idle);
+            }
             Script.characterCmp.walk(0);
         }
         if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])) {
@@ -756,6 +779,14 @@ var Script;
             spacePressed = false;
         }
     }
+    function hndAttack() {
+        Script.attackingMotion = true;
+        Script.characterCmp.setSprite(Script.attack);
+        setTimeout(() => {
+            Script.attackingMotion = false;
+        }, 400);
+    }
+    Script.hndAttack = hndAttack;
     function hndAim(e) {
         if (Script.weapon === "stones") {
             if (e.button === 2) {

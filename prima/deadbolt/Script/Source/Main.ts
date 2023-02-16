@@ -6,7 +6,7 @@ namespace Script {
   
   export let characterCmp: CharacterComponent;
   let cmpCamera: fc.ComponentCamera;
-  let gravityCmp: GravityComponent;
+  export let gravityCmp: GravityComponent;
   
   export let branch: fc.Node;
   export let characterPos: fc.Node;
@@ -34,6 +34,7 @@ namespace Script {
 
   export let allowWalkRight: boolean = true;
   export let allowWalkLeft: boolean = true;
+  export let attackingMotion: boolean = false;
   let config: {[key: string]: number};
 
   let spacePressed: boolean = false;
@@ -88,6 +89,7 @@ namespace Script {
     window.addEventListener("contextmenu", (e) => {
       e.preventDefault();
     });
+    window.addEventListener("click", hndAttack);
 
   }
 
@@ -130,7 +132,7 @@ namespace Script {
     idleCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
     await imgSpriteSheetWalk.load("./imgs/Walk.png");
     walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
-    await imgSpriteSheetAttack.load("./imgs/Idle.gif");
+    await imgSpriteSheetAttack.load("./imgs/Attack.png");
     attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
 
     idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
@@ -138,6 +140,9 @@ namespace Script {
 
     walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
     walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 8, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+
+    attack = new fcAid.SpriteSheetAnimation("Attack", attackingCoat);
+    attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
     characterSprite.mtxLocal.translateY(0.12);
     characterSprite.mtxLocal.scaleX(1.3)
     console.log(walk);
@@ -176,7 +181,9 @@ namespace Script {
           characterCmp.walk(-1);
         }
       }else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])){
-        characterCmp.setSprite(idle)
+        if(!attackingMotion){
+          characterCmp.setSprite(idle)
+        }
         characterCmp.walk(0);
       }
       
@@ -190,6 +197,13 @@ namespace Script {
       }
   }
 
+  export function hndAttack(){
+    attackingMotion = true;
+    characterCmp.setSprite(attack);
+    setTimeout(() => {
+      attackingMotion = false;
+    }, 400);
+  }
   
   function hndAim(e: MouseEvent): void{
     if(weapon === "stones"){ 

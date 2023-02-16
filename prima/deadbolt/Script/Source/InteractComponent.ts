@@ -10,7 +10,6 @@ namespace Script {
    
     public static readonly iSubclass: number = fc.Component.registerSubclass(InteractComponent);
 
-
     constructor() {
       super();
 
@@ -43,12 +42,12 @@ namespace Script {
 
 
     update() {
+      DoorCmp = this.node.getComponent(DoorComponent);
+      StairCmp = this.node.getComponent(StairComponent);
       this.checkPlayerPos();
     }
 
     actionControls(){
-      DoorCmp = this.node.getComponent(DoorComponent);
-      StairCmp = this.node.getComponent(StairComponent);
 
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])){
         if(!this.keyEPressed) {
@@ -73,6 +72,11 @@ namespace Script {
 
     showInteract(){
       this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+      if(DoorCmp){
+        if(!DoorCmp.getOpenDoorVar()){
+          gravityCmp.wallCollission();
+        }
+      }
     }
 
     noInteract(){
@@ -82,11 +86,20 @@ namespace Script {
     checkPlayerPos(){
       let playerPos: fc.Vector3 = characterPos.mtxLocal.translation;
       let interactablePos: fc.Vector3 = this.node.getParent().mtxLocal.translation;
-      if(Math.abs(playerPos.x - interactablePos.x) < 1){
-        this.showInteract();
+      if(StairCmp){
+        if(Math.abs(playerPos.x - interactablePos.x) < 0.3){
+          this.showInteract();
         this.actionControls();
-      } else {
-        this.noInteract();
+        } else {
+          this.noInteract();
+        }
+      }else{
+        if(Math.abs(playerPos.x - interactablePos.x) < 1){
+          this.showInteract();
+          this.actionControls();
+        } else {
+          this.noInteract();
+        }
       }
 
     }

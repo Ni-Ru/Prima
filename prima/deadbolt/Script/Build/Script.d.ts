@@ -29,11 +29,12 @@ declare namespace Script {
 }
 declare namespace Script {
     import fc = FudgeCore;
-    let openDoor: boolean;
     class DoorComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
+        private openDoorVar;
         hndEvent: (_event: Event) => void;
+        getOpenDoorVar(): boolean;
         interaction(): void;
         loadTextures(closed: Boolean): void;
         openDoor(): void;
@@ -121,6 +122,7 @@ declare namespace Script {
     import fc = FudgeCore;
     import fcAid = FudgeAid;
     let characterCmp: CharacterComponent;
+    let gravityCmp: GravityComponent;
     let branch: fc.Node;
     let characterPos: fc.Node;
     let characterSprite: fcAid.NodeSprite;
@@ -131,6 +133,8 @@ declare namespace Script {
     const walkSpeed: number;
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
+    let attackingMotion: boolean;
+    function hndAttack(): void;
 }
 declare namespace Script {
     import fc = FudgeCore;

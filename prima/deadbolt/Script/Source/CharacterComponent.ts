@@ -82,11 +82,13 @@ namespace Script {
       this.node.dispatchEvent(new Event("playSound", {bubbles: true}));
       if(weapon === "knife"){
         weapon = "stones";
+        window.removeEventListener("click", hndAttack);
         document.getElementById("knife").removeAttribute("class");
         document.getElementById("stones").setAttribute("class", "selected");
         document.getElementById("stoneImgs").setAttribute("class", "selected");
       }else{
         weapon = "knife";
+        window.addEventListener("click", hndAttack);
         document.getElementById("stones").removeAttribute("class");
         document.getElementById("stoneImgs").removeAttribute("class");
         document.getElementById("knife").setAttribute("class", "selected");
@@ -94,12 +96,11 @@ namespace Script {
     }
 
     hndThrow(e: MouseEvent): void{
-      console.log("hi");
       if(weapon === "stones" && gameState.stones > 0){
         let vctMouse: fc.Vector2 = new fc.Vector2();
         vctMouse.x = 2 * (e.clientX / window.innerWidth) -1;
         vctMouse.y = 2 * (e.clientY / window.innerHeight) -1;
-        let newStone = new StoneNode(vctMouse)
+        let newStone = new StoneNode(vctMouse);
         let items: fc.Node = branch.getChildrenByName("environment")[0].getChildrenByName("items")[0];
         items.addChild(newStone);
         gameState.stones -= 1;
