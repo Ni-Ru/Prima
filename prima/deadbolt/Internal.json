@@ -2973,6 +2973,90 @@
                   },
                   "children": []
                 }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "city",
+                  "active": true,
+                  "components": {
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-16T23:13:09.813Z|04219"
+                        }
+                      }
+                    ],
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                          "pivot": {
+                            "translation": "[5, 4, -0.10000000149011612]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[30, 10, -0.20000000298023224]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "city",
+                  "active": true,
+                  "components": {
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-16T23:13:09.813Z|04219"
+                        }
+                      }
+                    ],
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                          "pivot": {
+                            "translation": "[15, 4, -0.20000000298023224]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[60, 10, -0.20000000298023224]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
               }
             ]
           }
@@ -3571,6 +3655,30 @@
       ],
       "idResource": "Graph|2023-02-16T14:59:46.455Z|79493",
       "type": "Graph"
+    }
+  },
+  "Material|2023-02-16T23:13:09.813Z|04219": {
+    "ƒ.Material": {
+      "name": "ShaderLitTextured",
+      "idResource": "Material|2023-02-16T23:13:09.813Z|04219",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2023-02-16T23:13:14.618Z|40894"
+        }
+      }
+    }
+  },
+  "TextureImage|2023-02-16T23:13:14.618Z|40894": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\city.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-16T23:13:14.618Z|40894",
+        "name": "imgs\\city.png",
+        "mipmap": "CRISP"
+      }
     }
   }
 }
