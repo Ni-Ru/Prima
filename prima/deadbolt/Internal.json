@@ -212,7 +212,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[20, 3, 0]",
+                                  "translation": "[30, 3, 0]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -326,7 +326,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[15, 0, 0]",
+                                  "translation": "[10, 0, 0]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -421,6 +421,111 @@
                           }
                         ]
                       }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "wall_Pos",
+                        "active": true,
+                        "components": {
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[2.6000001430511475, 2.0999999046325684, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": [
+                          {
+                            "ƒ.Node": {
+                              "name": "Wall",
+                              "active": true,
+                              "components": {
+                                "ComponentMaterial": [
+                                  {
+                                    "ƒ.ComponentMaterial": {
+                                      "sortForAlpha": false,
+                                      "clrPrimary": "[1, 1, 1, 1]",
+                                      "clrSecondary": "[1, 1, 1, 1]",
+                                      "pivot": {
+                                        "translation": "[0, 0]",
+                                        "rotation": 0,
+                                        "scaling": "[1, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      },
+                                      "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+                                    }
+                                  }
+                                ],
+                                "ComponentMesh": [
+                                  {
+                                    "ƒ.ComponentMesh": {
+                                      "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                                      "pivot": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[0.20000001788139343, 1.7999999523162842, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ],
+                                "ComponentTransform": [
+                                  {
+                                    "ƒ.ComponentTransform": {
+                                      "local": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[1, 1, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ],
+                                "ComponentRigidbody": [
+                                  {
+                                    "ƒ.ComponentRigidbody": {
+                                      "initialization": "TO_PIVOT",
+                                      "friction": 0.2,
+                                      "restitution": 0.2,
+                                      "mass": 1,
+                                      "dampTranslation": 0.1,
+                                      "dampRotation": 0.1,
+                                      "effectGravity": 1,
+                                      "typeBody": "STATIC",
+                                      "typeCollider": "CUBE",
+                                      "isTrigger": false,
+                                      "id": 0,
+                                      "pivot": {
+                                        "translation": "[0, 0, 0]",
+                                        "rotation": "[0, 0, 0]",
+                                        "scaling": "[0.20000000298023224, 1.8000000715255737, 1]"
+                                      },
+                                      "Component": {
+                                        "active": true
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "children": []
+                            }
+                          }
+                        ]
+                      }
                     }
                   ]
                 }
@@ -487,7 +592,7 @@
                             "ƒ.GraphInstance": {
                               "deserializeFromSource": true,
                               "name": "Stair",
-                              "idSource": "Graph|2023-02-05T01:20:59.798Z|88819"
+                              "idSource": "Graph|2023-02-16T14:59:46.455Z|79493"
                             }
                           }
                         ]
@@ -511,7 +616,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[5, 0, 0]",
+                                  "translation": "[2.6000001430511475, 0, 0]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -656,6 +761,30 @@
       "children": [],
       "idResource": "Graph|2023-01-07T14:43:21.981Z|38454",
       "type": "Graph"
+    }
+  },
+  "Material|2023-02-15T13:03:03.719Z|90009": {
+    "ƒ.Material": {
+      "name": "closedDoor",
+      "idResource": "Material|2023-02-15T13:03:03.719Z|90009",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2023-02-15T13:03:16.097Z|69726"
+        }
+      }
+    }
+  },
+  "TextureImage|2023-02-15T13:03:16.097Z|69726": {
+    "ƒ.TextureImage": {
+      "url": "imgs\\closedDoor.gif",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2023-02-15T13:03:16.097Z|69726",
+        "name": "imgs\\closedDoor.gif",
+        "mipmap": "CRISP"
+      }
     }
   },
   "Graph|2023-02-04T00:32:10.829Z|44980": {
@@ -1011,26 +1140,142 @@
       "type": "Graph"
     }
   },
-  "Material|2023-02-15T13:03:03.719Z|90009": {
+  "Graph|2023-02-16T14:59:46.455Z|79493": {
+    "ƒ.Graph": {
+      "name": "Stair",
+      "active": true,
+      "components": {
+        "ComponentMesh": [
+          {
+            "ƒ.ComponentMesh": {
+              "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+              "pivot": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[0.800000011920929, 1.2999999523162842, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentMaterial": [
+          {
+            "ƒ.ComponentMaterial": {
+              "sortForAlpha": false,
+              "clrPrimary": "[1, 0.9333333333333333, 0, 0]",
+              "clrSecondary": "[1, 1, 1, 1]",
+              "pivot": {
+                "translation": "[0, 0]",
+                "rotation": 0,
+                "scaling": "[1, 1]"
+              },
+              "Component": {
+                "active": true
+              },
+              "idMaterial": "Material|2023-01-07T14:46:11.986Z|54959"
+            }
+          }
+        ],
+        "ComponentTransform": [
+          {
+            "ƒ.ComponentTransform": {
+              "local": {
+                "translation": "[0, 0.5, -0.15000000596046448]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[1, 1, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "StairComponent": [
+          {
+            "Script.StairComponent": {
+              "active": true
+            }
+          }
+        ],
+        "InteractComponent": [
+          {
+            "Script.InteractComponent": {
+              "active": true,
+              "keyEPressed": true
+            }
+          }
+        ]
+      },
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "StairTexture",
+            "active": true,
+            "components": {
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[1, 1, 1, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2023-02-16T15:02:08.649Z|45726"
+                  }
+                }
+              ],
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshQuad|2023-01-07T14:46:04.647Z|94313",
+                    "pivot": {
+                      "translation": "[0, 0, 0.009999999776482582]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[0.699999988079071, 1.2000000476837158, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      ],
+      "idResource": "Graph|2023-02-16T14:59:46.455Z|79493",
+      "type": "Graph"
+    }
+  },
+  "Material|2023-02-16T15:02:08.649Z|45726": {
     "ƒ.Material": {
-      "name": "closedDoor",
-      "idResource": "Material|2023-02-15T13:03:03.719Z|90009",
+      "name": "StairsUp",
+      "idResource": "Material|2023-02-16T15:02:08.649Z|45726",
       "shader": "ShaderLitTextured",
       "coat": {
         "ƒ.CoatTextured": {
           "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2023-02-15T13:03:16.097Z|69726"
+          "idTexture": "TextureImage|2023-02-16T15:02:17.259Z|18933"
         }
       }
     }
   },
-  "TextureImage|2023-02-15T13:03:16.097Z|69726": {
+  "TextureImage|2023-02-16T15:02:17.259Z|18933": {
     "ƒ.TextureImage": {
-      "url": "imgs\\closedDoor.gif",
+      "url": "imgs\\stairUp.gif",
       "type": "TextureImage",
       "Texture": {
-        "idResource": "TextureImage|2023-02-15T13:03:16.097Z|69726",
-        "name": "imgs\\closedDoor.gif",
+        "idResource": "TextureImage|2023-02-16T15:02:17.259Z|18933",
+        "name": "imgs\\stairUp.gif",
         "mipmap": "CRISP"
       }
     }
