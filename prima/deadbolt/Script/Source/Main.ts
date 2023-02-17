@@ -98,7 +98,7 @@ namespace Script {
     deltaTime = fc.Loop.timeFrameGame / 1000;
     characterCmp.update(deltaTime);
     gravityCmp.update(deltaTime);
-
+    viewport.physicsDebugMode = 2;
     for(let enemy of enemyNodes){
       enemy.getChild(0).getComponent(GravityComponent).update(deltaTime);
     }
@@ -128,6 +128,11 @@ namespace Script {
     characterPos.appendChild(characterSprite);
     characterSprite.addComponent(new CharacterComponent);
     characterSprite.addComponent(new GravityComponent);
+
+    let characterRigidBody: fc.ComponentRigidbody = new fc.ComponentRigidbody();
+    characterRigidBody.typeBody = fc.BODY_TYPE.KINEMATIC;
+    characterRigidBody.mtxPivot.translateY(-0.2);
+    characterSprite.addComponent(characterRigidBody);
     characterCmp = characterSprite.getComponent(CharacterComponent);
     gravityCmp = characterSprite.getComponent(GravityComponent);
   }

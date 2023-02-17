@@ -58,8 +58,7 @@ var Script;
         initAnim(enter) {
             let animseqEnter = new fc.AnimationSequence();
             animseqEnter.addKey(new fc.AnimationKey(0, 1));
-            animseqEnter.addKey(new fc.AnimationKey(500, 0.5));
-            animseqEnter.addKey(new fc.AnimationKey(1000, 0));
+            animseqEnter.addKey(new fc.AnimationKey(500, 0));
             let animStructureEnter = {
                 components: {
                     ComponentMaterial: [
@@ -75,8 +74,7 @@ var Script;
             };
             let animseqLeave = new fc.AnimationSequence();
             animseqLeave.addKey(new fc.AnimationKey(0, 0));
-            animseqLeave.addKey(new fc.AnimationKey(500, 0.5));
-            animseqLeave.addKey(new fc.AnimationKey(1000, 1));
+            animseqLeave.addKey(new fc.AnimationKey(500, 1));
             let animStructureLeave = {
                 components: {
                     ComponentMaterial: [
@@ -115,8 +113,8 @@ var Script;
                 setTimeout(() => {
                     this.node.removeComponent(cmpAnimator);
                     Script.allowInputs = true;
-                }, 1000);
-            }, 1000);
+                }, 500);
+            }, 500);
         }
         changeWeapon() {
             this.node.dispatchEvent(new Event("playSound", { bubbles: true }));
@@ -352,22 +350,13 @@ var Script;
             _machine.transit(JOB.IDLE);
         }
         static async actIdle(_machine) {
-            let charPos = Script.characterSprite.mtxWorld.translation;
-            charPos.y -= 0.7;
-            let distance = fc.Vector3.DIFFERENCE(charPos, _machine.node.getParent().mtxWorld.translation);
-            distance.normalize();
-            let watchDirection = _machine.node.mtxWorld.getX();
-            let angle = fc.Vector3.DOT(watchDirection, distance);
-            //console.log(angle);
-            if (angle > -0.5 && angle < -0.48) {
-                _machine.transit(JOB.ATTACK);
-            }
+            _machine.checkView();
         }
         static async actSearch(_machine) {
             //console.log("search");
-            let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
-            if (distance.magnitude < 10)
-                _machine.transit(JOB.ATTACK);
+            // let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
+            // if (distance.magnitude < 10)
+            //   _machine.transit(JOB.ATTACK);
         }
         static async actAttack(_machine) {
             let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
@@ -397,12 +386,17 @@ var Script;
         };
         update = (_event) => {
             this.act();
-            this.checkView();
         };
         checkView = () => {
-            let raycast = fc.Physics.raycast(this.enemy.mtxWorld.translation, this.enemy.mtxWorld.getX(), 10, true);
+            let direction = new fc.Vector3(-1, 0, 0);
+            if (this.enemy.mtxLocal.rotation.y === 0) {
+                direction = new fc.Vector3(1, 0, 0);
+            }
+            let raycast = fc.Physics.raycast(this.enemy.mtxWorld.translation, direction, 7, true);
             if (raycast.hit) {
-                console.log(raycast.rigidbodyComponent.node.name);
+                if (raycast.rigidbodyComponent.node.name === "character") {
+                    this.transit(JOB.ATTACK);
+                }
             }
         };
     }
@@ -738,6 +732,7 @@ var Script;
         Script.deltaTime = fc.Loop.timeFrameGame / 1000;
         Script.characterCmp.update(Script.deltaTime);
         Script.gravityCmp.update(Script.deltaTime);
+        viewport.physicsDebugMode = 2;
         for (let enemy of enemyNodes) {
             enemy.getChild(0).getComponent(Script.GravityComponent).update(Script.deltaTime);
         }
@@ -759,6 +754,10 @@ var Script;
         Script.characterPos.appendChild(Script.characterSprite);
         Script.characterSprite.addComponent(new Script.CharacterComponent);
         Script.characterSprite.addComponent(new Script.GravityComponent);
+        let characterRigidBody = new fc.ComponentRigidbody();
+        characterRigidBody.typeBody = fc.BODY_TYPE.KINEMATIC;
+        characterRigidBody.mtxPivot.translateY(-0.2);
+        Script.characterSprite.addComponent(characterRigidBody);
         Script.characterCmp = Script.characterSprite.getComponent(Script.CharacterComponent);
         Script.gravityCmp = Script.characterSprite.getComponent(Script.GravityComponent);
     }

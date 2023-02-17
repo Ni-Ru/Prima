@@ -78,8 +78,7 @@ namespace Script {
     
       let animseqEnter: fc.AnimationSequence = new fc.AnimationSequence();
       animseqEnter.addKey(new fc.AnimationKey(0,1));
-      animseqEnter.addKey(new fc.AnimationKey(500, 0.5));
-      animseqEnter.addKey(new fc.AnimationKey(1000, 0));
+      animseqEnter.addKey(new fc.AnimationKey(500, 0));
   
       let animStructureEnter: fc.AnimationStructure = {
         components: {
@@ -98,8 +97,7 @@ namespace Script {
 
       let animseqLeave: fc.AnimationSequence = new fc.AnimationSequence();
       animseqLeave.addKey(new fc.AnimationKey(0,0));
-      animseqLeave.addKey(new fc.AnimationKey(500, 0.5));
-      animseqLeave.addKey(new fc.AnimationKey(1000, 1));
+      animseqLeave.addKey(new fc.AnimationKey(500, 1));
       let animStructureLeave: fc.AnimationStructure = {
         components: {
           ComponentMaterial: [
@@ -140,8 +138,8 @@ namespace Script {
         setTimeout(() => {
           this.node.removeComponent(cmpAnimator);
           allowInputs=true;
-        }, 1000);
-      }, 1000);
+        }, 500);
+      }, 500);
     }
 
 

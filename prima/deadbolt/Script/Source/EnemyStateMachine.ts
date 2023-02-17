@@ -51,24 +51,14 @@ namespace Script {
       }
   
       private static async actIdle(_machine: EnemyStateMachine): Promise<void> {
-        let charPos: fc.Vector3 = characterSprite.mtxWorld.translation;
-        charPos.y -= 0.7;
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(charPos, _machine.node.getParent().mtxWorld.translation);
-        distance.normalize();
-        let watchDirection: fc.Vector3 = _machine.node.mtxWorld.getX();
-        let angle: number = fc.Vector3.DOT(watchDirection, distance);
-        //console.log(angle);
-       
-        if (angle > -0.5 && angle < -0.48){
-          _machine.transit(JOB.ATTACK);
-        }
+        _machine.checkView();
       }
 
       private static async actSearch(_machine: EnemyStateMachine): Promise<void> {
         //console.log("search");
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
-        if (distance.magnitude < 10)
-          _machine.transit(JOB.ATTACK);
+        // let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
+        // if (distance.magnitude < 10)
+        //   _machine.transit(JOB.ATTACK);
 
       }
       
@@ -105,13 +95,18 @@ namespace Script {
   
       private update = (_event: Event): void => {
         this.act();
-        this.checkView();
       }
 
       private checkView = (): void =>{
-        let raycast: fc.RayHitInfo = fc.Physics.raycast(this.enemy.mtxWorld.translation, this.enemy.mtxWorld.getX(), 10, true);
+        let direction: fc.Vector3 = new fc.Vector3(-1, 0, 0);
+        if(this.enemy.mtxLocal.rotation.y === 0){
+          direction = new fc.Vector3(1, 0, 0);
+        }
+        let raycast: fc.RayHitInfo = fc.Physics.raycast(this.enemy.mtxWorld.translation, direction, 7, true);
         if(raycast.hit){
-          console.log(raycast.rigidbodyComponent.node.name);
+          if(raycast.rigidbodyComponent.node.name === "character"){
+            this.transit(JOB.ATTACK);
+          }
         }
       }
   
