@@ -50,18 +50,20 @@ namespace Script {
     actionControls(){
 
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])){
-        if(!this.keyEPressed) {
-          this.keyEPressed = true;
-          switch (this.node.name){
-            case "Door":
-              DoorCmp.interaction();
-              break;
-            case "Stair":
-              if(!usedStairs){
-                StairCmp.interaction();
-                usedStairs = true;
-              }
-              break;  
+        if(allowInputs){
+          if(!this.keyEPressed) {
+            this.keyEPressed = true;
+            switch (this.node.name){
+              case "Door":
+                DoorCmp.interaction();
+                break;
+              case "Stair":
+                if(!usedStairs){
+                  StairCmp.interaction();
+                  usedStairs = true;
+                }
+                break;  
+            }
           }
         }
       } else {

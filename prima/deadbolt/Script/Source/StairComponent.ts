@@ -2,8 +2,6 @@ namespace Script {
   import fc = FudgeCore;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
-  let InteractCmp: InteractComponent;
-
   export class StairComponent extends fc.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number = fc.Component.registerSubclass(StairComponent);
@@ -49,7 +47,6 @@ namespace Script {
     }
 
     interaction(){
-      InteractCmp = this.node.getComponent(InteractComponent);
       this.findDoor();
     }
 
@@ -68,9 +65,9 @@ namespace Script {
   
         if(Math.abs(this.calcStairPos.x - this.calcActiveStairPos.x) < 1){
           if(Math.abs(this.calcStairPos.y - this.calcActiveStairPos.y) > 1){
-            console.log(this.calcStairPos.y - this.calcActiveStairPos.y);
-            characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y);
-            InteractCmp.noInteract();
+            if(allowWalkLeft || allowWalkRight){
+              characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y, this.node.getComponent(InteractComponent));
+            }
           }
         }
       }

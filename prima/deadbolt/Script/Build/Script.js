@@ -3,6 +3,7 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    let cmpAnimator;
     Script.xSpeed = 0;
     let directionRight = true;
     Script.usedStairs = false;
@@ -54,8 +55,70 @@ var Script;
                 directionRight = false;
             }
         }
-        useStairs(exit) {
-            Script.characterPos.mtxLocal.translateY(exit);
+        initAnim(enter) {
+            let animseqEnter = new fc.AnimationSequence();
+            animseqEnter.addKey(new fc.AnimationKey(0, 1));
+            animseqEnter.addKey(new fc.AnimationKey(500, 0.5));
+            animseqEnter.addKey(new fc.AnimationKey(1000, 0));
+            let animStructureEnter = {
+                components: {
+                    ComponentMaterial: [
+                        {
+                            "fc.ComponentMaterial": {
+                                clrPrimary: {
+                                    a: animseqEnter
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+            let animseqLeave = new fc.AnimationSequence();
+            animseqLeave.addKey(new fc.AnimationKey(0, 0));
+            animseqLeave.addKey(new fc.AnimationKey(500, 0.5));
+            animseqLeave.addKey(new fc.AnimationKey(1000, 1));
+            let animStructureLeave = {
+                components: {
+                    ComponentMaterial: [
+                        {
+                            "fc.ComponentMaterial": {
+                                clrPrimary: {
+                                    a: animseqLeave
+                                }
+                            }
+                        }
+                    ]
+                }
+            };
+            let animationEnter = new ƒ.Animation("enterStairs", animStructureEnter, 30);
+            let animationLeave = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
+            if (enter) {
+                console.log("enter");
+                cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
+            }
+            else {
+                console.log("leave");
+                cmpAnimator = new ƒ.ComponentAnimator(animationLeave, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
+            }
+            this.node.addComponent(cmpAnimator);
+            cmpAnimator.activate(true);
+        }
+        useStairs(exit, stairInteract) {
+            this.walk(0);
+            this.initAnim(true);
+            Script.allowInputs = false;
+            setTimeout(() => {
+                Script.characterPos.mtxLocal.translateY(exit);
+                this.node.removeComponent(cmpAnimator);
+                this.initAnim(false);
+                if (stairInteract) {
+                    stairInteract.noInteract();
+                }
+                setTimeout(() => {
+                    this.node.removeComponent(cmpAnimator);
+                    Script.allowInputs = true;
+                }, 1000);
+            }, 1000);
         }
         changeWeapon() {
             this.node.dispatchEvent(new Event("playSound", { bubbles: true }));
@@ -571,18 +634,20 @@ var Script;
         }
         actionControls() {
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])) {
-                if (!this.keyEPressed) {
-                    this.keyEPressed = true;
-                    switch (this.node.name) {
-                        case "Door":
-                            DoorCmp.interaction();
-                            break;
-                        case "Stair":
-                            if (!Script.usedStairs) {
-                                StairCmp.interaction();
-                                Script.usedStairs = true;
-                            }
-                            break;
+                if (Script.allowInputs) {
+                    if (!this.keyEPressed) {
+                        this.keyEPressed = true;
+                        switch (this.node.name) {
+                            case "Door":
+                                DoorCmp.interaction();
+                                break;
+                            case "Stair":
+                                if (!Script.usedStairs) {
+                                    StairCmp.interaction();
+                                    Script.usedStairs = true;
+                                }
+                                break;
+                        }
                     }
                 }
             }
@@ -645,6 +710,7 @@ var Script;
     let deltaTime;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
+    Script.allowInputs = true;
     Script.attackingMotion = false;
     let config;
     let spacePressed = false;
@@ -712,7 +778,6 @@ var Script;
         Script.characterSprite.addComponent(new Script.GravityComponent);
         Script.characterCmp = Script.characterSprite.getComponent(Script.CharacterComponent);
         Script.gravityCmp = Script.characterSprite.getComponent(Script.GravityComponent);
-        console.log(Script.characterPos);
     }
     async function loadSprites() {
         await imgSpriteSheet.load("./imgs/Idle.png");
@@ -751,32 +816,34 @@ var Script;
         audioComp.play(true);
     }
     function controls() {
-        if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
-            if (Script.allowWalkRight) {
-                Script.characterCmp.setSprite(Script.walk);
-                Script.characterCmp.walk(1);
+        if (Script.allowInputs) {
+            if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
+                if (Script.allowWalkRight) {
+                    Script.characterCmp.setSprite(Script.walk);
+                    Script.characterCmp.walk(1);
+                }
             }
-        }
-        else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])) {
-            if (Script.allowWalkLeft) {
-                Script.characterCmp.setSprite(Script.walk);
-                Script.characterCmp.walk(-1);
+            else if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A])) {
+                if (Script.allowWalkLeft) {
+                    Script.characterCmp.setSprite(Script.walk);
+                    Script.characterCmp.walk(-1);
+                }
             }
-        }
-        else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
-            if (!Script.attackingMotion) {
-                Script.characterCmp.setSprite(Script.idle);
+            else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
+                if (!Script.attackingMotion) {
+                    Script.characterCmp.setSprite(Script.idle);
+                }
+                Script.characterCmp.walk(0);
             }
-            Script.characterCmp.walk(0);
-        }
-        if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])) {
-            if (!spacePressed) {
-                spacePressed = true;
-                Script.characterCmp.changeWeapon();
+            if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])) {
+                if (!spacePressed) {
+                    spacePressed = true;
+                    Script.characterCmp.changeWeapon();
+                }
             }
-        }
-        else {
-            spacePressed = false;
+            else {
+                spacePressed = false;
+            }
         }
     }
     function hndAttack() {
@@ -805,7 +872,6 @@ var Script;
 (function (Script) {
     var fc = FudgeCore;
     fc.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
-    let InteractCmp;
     class StairComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(StairComponent);
@@ -841,7 +907,6 @@ var Script;
             }
         };
         interaction() {
-            InteractCmp = this.node.getComponent(Script.InteractComponent);
             this.findDoor();
         }
         findDoor() {
@@ -856,9 +921,9 @@ var Script;
                 this.calcStairPos = fc.Vector3.SUM(this.StairNodePos, this.StairPos);
                 if (Math.abs(this.calcStairPos.x - this.calcActiveStairPos.x) < 1) {
                     if (Math.abs(this.calcStairPos.y - this.calcActiveStairPos.y) > 1) {
-                        console.log(this.calcStairPos.y - this.calcActiveStairPos.y);
-                        Script.characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y);
-                        InteractCmp.noInteract();
+                        if (Script.allowWalkLeft || Script.allowWalkRight) {
+                            Script.characterCmp.useStairs(this.calcStairPos.y - this.calcActiveStairPos.y, this.node.getComponent(Script.InteractComponent));
+                        }
                     }
                 }
             }

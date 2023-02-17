@@ -3,6 +3,8 @@ namespace Script {
   import fcAid = FudgeAid;
   fc.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
+  let cmpAnimator: ƒ.ComponentAnimator;
+
   export let xSpeed = 0;
 
   let directionRight: boolean = true;
@@ -72,8 +74,76 @@ namespace Script {
       
     }
 
-    useStairs(exit: number){
-      characterPos.mtxLocal.translateY(exit);
+    initAnim (enter: boolean): void {
+    
+      let animseqEnter: fc.AnimationSequence = new fc.AnimationSequence();
+      animseqEnter.addKey(new fc.AnimationKey(0,1));
+      animseqEnter.addKey(new fc.AnimationKey(500, 0.5));
+      animseqEnter.addKey(new fc.AnimationKey(1000, 0));
+  
+      let animStructureEnter: fc.AnimationStructure = {
+        components: {
+          ComponentMaterial: [
+            {
+              "fc.ComponentMaterial": {
+                clrPrimary: {
+                  a: animseqEnter
+                }
+              }
+            }
+          ]
+        }
+      };
+
+
+      let animseqLeave: fc.AnimationSequence = new fc.AnimationSequence();
+      animseqLeave.addKey(new fc.AnimationKey(0,0));
+      animseqLeave.addKey(new fc.AnimationKey(500, 0.5));
+      animseqLeave.addKey(new fc.AnimationKey(1000, 1));
+      let animStructureLeave: fc.AnimationStructure = {
+        components: {
+          ComponentMaterial: [
+            {
+              "fc.ComponentMaterial": {
+                clrPrimary: {
+                  a: animseqLeave
+                }
+              }
+            }
+          ]
+        }
+      };
+  
+      let animationEnter: ƒ.Animation = new ƒ.Animation("enterStairs", animStructureEnter, 30);
+      let animationLeave: ƒ.Animation = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
+
+      if(enter){
+        console.log("enter");
+        cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
+      }else{
+        console.log("leave");
+        cmpAnimator = new ƒ.ComponentAnimator(animationLeave, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
+      }
+      this.node.addComponent(cmpAnimator);
+      cmpAnimator.activate(true);
+    }
+
+    useStairs(exit: number, stairInteract: InteractComponent){
+      this.walk(0);
+      this.initAnim(true);
+      allowInputs =false
+      setTimeout(() => {
+        characterPos.mtxLocal.translateY(exit);
+        this.node.removeComponent(cmpAnimator);
+        this.initAnim(false);
+        if(stairInteract){
+          stairInteract.noInteract();
+        }
+        setTimeout(() => {
+          this.node.removeComponent(cmpAnimator);
+          allowInputs=true;
+        }, 1000);
+      }, 1000);
     }
 
 

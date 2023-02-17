@@ -110,8 +110,8 @@
                       {
                         "ƒ.ComponentTransform": {
                           "local": {
-                            "translation": "[10, 0, 0]",
-                            "rotation": "[0, 0, 0]",
+                            "translation": "[5, 0, 0]",
+                            "rotation": "[0, 180, 0]",
                             "scaling": "[1, 1, 1]"
                           },
                           "Component": {
@@ -134,6 +134,29 @@
                         "ƒ.ComponentTransform": {
                           "local": {
                             "translation": "[3, 3, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "enemy_Pos",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[23, 0, 0]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[1, 1, 1]"
                           },

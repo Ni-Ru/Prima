@@ -12,7 +12,8 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
         update(deltaTime: number): void;
         walk(direction: number): void;
-        useStairs(exit: number): void;
+        initAnim(enter: boolean): void;
+        useStairs(exit: number, stairInteract: InteractComponent): void;
         changeWeapon(): void;
         hndThrow(e: MouseEvent): void;
         setSprite(sprite: fcAid.SpriteSheetAnimation): void;
@@ -133,6 +134,7 @@ declare namespace Script {
     const walkSpeed: number;
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
+    let allowInputs: boolean;
     let attackingMotion: boolean;
     function hndAttack(): void;
 }

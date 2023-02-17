@@ -34,6 +34,7 @@ namespace Script {
 
   export let allowWalkRight: boolean = true;
   export let allowWalkLeft: boolean = true;
+  export let allowInputs: boolean = true;
   export let attackingMotion: boolean = false;
   let config: {[key: string]: number};
 
@@ -124,7 +125,6 @@ namespace Script {
     characterSprite.addComponent(new GravityComponent);
     characterCmp = characterSprite.getComponent(CharacterComponent);
     gravityCmp = characterSprite.getComponent(GravityComponent);
-    console.log(characterPos);
   }
 
   async function loadSprites(){
@@ -170,6 +170,7 @@ namespace Script {
   }
 
   function controls(){
+    if(allowInputs){
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])){
         if(allowWalkRight){
           characterCmp.setSprite(walk);
@@ -188,13 +189,14 @@ namespace Script {
       }
       
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.SPACE])){
-        if(!spacePressed) {
-          spacePressed = true;
-          characterCmp.changeWeapon();
-        }
+          if(!spacePressed) {
+            spacePressed = true;
+            characterCmp.changeWeapon();
+          }
       }else{
         spacePressed = false;
       }
+    }
   }
 
   export function hndAttack(){
