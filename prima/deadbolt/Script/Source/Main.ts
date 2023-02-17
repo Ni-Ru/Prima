@@ -98,7 +98,6 @@ namespace Script {
     deltaTime = fc.Loop.timeFrameGame / 1000;
     characterCmp.update(deltaTime);
     gravityCmp.update(deltaTime);
-    viewport.physicsDebugMode = 2;
     for(let enemy of enemyNodes){
       enemy.getChild(0).getComponent(GravityComponent).update(deltaTime);
     }

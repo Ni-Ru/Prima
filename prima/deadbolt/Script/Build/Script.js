@@ -732,7 +732,6 @@ var Script;
         Script.deltaTime = fc.Loop.timeFrameGame / 1000;
         Script.characterCmp.update(Script.deltaTime);
         Script.gravityCmp.update(Script.deltaTime);
-        viewport.physicsDebugMode = 2;
         for (let enemy of enemyNodes) {
             enemy.getChild(0).getComponent(Script.GravityComponent).update(Script.deltaTime);
         }
