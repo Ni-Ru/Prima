@@ -738,7 +738,6 @@ var Script;
         for (let enemy of enemyNodes) {
             enemy.getChild(0).getComponent(Script.GravityComponent).update(Script.deltaTime);
         }
-        viewport.physicsDebugMode = 2;
         controls();
         fc.Physics.simulate(); // if physics is included and used
         viewport.draw();
