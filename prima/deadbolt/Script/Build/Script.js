@@ -363,8 +363,7 @@ var Script;
             distance.normalize(1);
             let distanceX = _machine.enemySpeed * Math.abs(distance.x);
             _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX);
-            if (Math.abs(distance.x) > 2 || distance.x < 0)
-                _machine.transit(JOB.IDLE);
+            _machine.checkView();
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
@@ -396,6 +395,9 @@ var Script;
             if (raycast.hit) {
                 if (raycast.rigidbodyComponent.node.name === "character") {
                     this.transit(JOB.ATTACK);
+                }
+                else {
+                    this.transit(JOB.IDLE);
                 }
             }
         };
