@@ -387,9 +387,9 @@ var Script;
             this.act();
         };
         checkView = () => {
-            let direction = new fc.Vector3(-1, 0, 0);
-            if (this.enemy.mtxLocal.rotation.y === 0) {
-                direction = new fc.Vector3(1, 0, 0);
+            let direction = new fc.Vector3(1, 0, 0);
+            if (this.enemy.getParent().mtxLocal.rotation.y === 0) {
+                direction = new fc.Vector3(-1, 0, 0);
             }
             let raycast = fc.Physics.raycast(this.enemy.mtxWorld.translation, direction, 7, true);
             if (raycast.hit) {
@@ -399,6 +399,9 @@ var Script;
                 else {
                     this.transit(JOB.IDLE);
                 }
+            }
+            else {
+                this.transit(JOB.IDLE);
             }
         };
     }
@@ -735,6 +738,7 @@ var Script;
         for (let enemy of enemyNodes) {
             enemy.getChild(0).getComponent(Script.GravityComponent).update(Script.deltaTime);
         }
+        viewport.physicsDebugMode = 2;
         controls();
         fc.Physics.simulate(); // if physics is included and used
         viewport.draw();

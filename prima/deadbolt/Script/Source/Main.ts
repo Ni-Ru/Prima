@@ -101,7 +101,7 @@ namespace Script {
     for(let enemy of enemyNodes){
       enemy.getChild(0).getComponent(GravityComponent).update(deltaTime);
     }
-
+viewport.physicsDebugMode = 2;
     controls();
     fc.Physics.simulate();  // if physics is included and used
     viewport.draw();

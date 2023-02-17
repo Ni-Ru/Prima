@@ -97,9 +97,9 @@ namespace Script {
       }
 
       private checkView = (): void =>{
-        let direction: fc.Vector3 = new fc.Vector3(-1, 0, 0);
-        if(this.enemy.mtxLocal.rotation.y === 0){
-          direction = new fc.Vector3(1, 0, 0);
+        let direction: fc.Vector3 = new fc.Vector3(1, 0, 0);
+        if(this.enemy.getParent().mtxLocal.rotation.y === 0){
+          direction = new fc.Vector3(-1, 0, 0);
         }
         let raycast: fc.RayHitInfo = fc.Physics.raycast(this.enemy.mtxWorld.translation, direction, 7, true);
         if(raycast.hit){
@@ -108,6 +108,8 @@ namespace Script {
           }else{
             this.transit(JOB.IDLE);
           }
+        }else{
+          this.transit(JOB.IDLE);
         }
       }
   
