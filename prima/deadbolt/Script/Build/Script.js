@@ -424,7 +424,6 @@ var Script;
             super();
             this.stones = _config.stones;
             this.controller = new fui.Controller(this, document.getElementById("vui"));
-            console.log(this.controller);
         }
     }
     Script.GameState = GameState;
@@ -463,7 +462,6 @@ var Script;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* COMPONENT_ADD */:
-                    console.log("edit");
                     break;
                 case "componentRemove" /* COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
@@ -471,7 +469,6 @@ var Script;
                     break;
                 case "nodeDeserialized" /* NODE_DESERIALIZED */:
                     this.characterPos = this.node.getParent();
-                    console.log(this.node);
                     // this.floors = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;

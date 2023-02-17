@@ -48,7 +48,6 @@ namespace Script {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case fc.EVENT.COMPONENT_ADD:
-          console.log("edit");
           break;
         case fc.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(fc.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -56,7 +55,6 @@ namespace Script {
           break;
         case fc.EVENT.NODE_DESERIALIZED: 
         this.characterPos = this.node.getParent();
-        console.log(this.node);
         // this.floors = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
          
         // if deserialized the node is now fully reconstructed and access to all its components and children is possible

@@ -23,7 +23,6 @@ namespace Script{
             super();
             this.stones = _config.stones
             this.controller = new fui.Controller(this, document.getElementById("vui"));
-            console.log(this.controller);
         }
     }
 }
