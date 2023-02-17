@@ -118,10 +118,8 @@ namespace Script {
       let animationLeave: ƒ.Animation = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
 
       if(enter){
-        console.log("enter");
         cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
       }else{
-        console.log("leave");
         cmpAnimator = new ƒ.ComponentAnimator(animationLeave, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
       }
       this.node.addComponent(cmpAnimator);

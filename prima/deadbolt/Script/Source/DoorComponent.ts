@@ -47,7 +47,6 @@ namespace Script {
     interaction(){
       doorTransform = this.node.getComponent(fc.ComponentTransform);
       doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
-      console.log(this.openDoor);
       switch (this.openDoorVar){
         case true:
           this.closeDoor();
@@ -72,10 +71,8 @@ namespace Script {
       openDoorImage.load("./imgs/openDoor.gif");
       closedDoorImage.load("./imgs/closedDoor.gif");
       if(closed){
-        console.log("open")
         openMaterial.coat = closedDoorCoat;
       }else{
-        console.log("close")
         openMaterial.coat = openDoorCoat;
       }
 

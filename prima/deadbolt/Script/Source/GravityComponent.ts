@@ -8,6 +8,8 @@ namespace Script {
   let velocityY: number = 0;
 
   let interactCmp: InteractComponent;
+
+  
   
 
   export class GravityComponent extends fc.ComponentScript {
@@ -46,6 +48,7 @@ namespace Script {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case fc.EVENT.COMPONENT_ADD:
+          console.log("edit");
           break;
         case fc.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(fc.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -53,6 +56,7 @@ namespace Script {
           break;
         case fc.EVENT.NODE_DESERIALIZED: 
         this.characterPos = this.node.getParent();
+        console.log(this.node);
         // this.floors = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
          
         // if deserialized the node is now fully reconstructed and access to all its components and children is possible
@@ -70,7 +74,7 @@ namespace Script {
     }
 
     checkCollission(){
-
+      this.characterPos = this.node.getParent();
       let floors: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
       let walls: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("walls")[0].getChildrenByName("wall_Pos");
       let doors: fc.Node[] = branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
@@ -100,11 +104,11 @@ namespace Script {
                 if(Math.abs(this.pos.x - this.obstaclePos.x) < 2){
                   switch(obstacle.name){
                     case "door_Pos":
-                      interactCmp.update();
+                      interactCmp.update(this);
                       break;
 
                     case "stair_Pos":
-                        interactCmp.update();
+                        interactCmp.update(this);
                       break;
 
                     default:
@@ -119,19 +123,26 @@ namespace Script {
     }
 
     wallCollission(){
+      let nodeName: string = this.node.name;
         if(Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength/2) + 0.25) {
           if(this.pos.x > this.obstaclePos.x){
-            allowWalkLeft = false;
+            if(nodeName === "character"){
+              allowWalkLeft = false;
+            }
             this.pos.x = this.obstaclePos.x + (this.obstacleLength/2) + 0.25;
             this.characterPos.mtxLocal.translation = this.pos;
           }else{
-            allowWalkRight = false;
+            if(nodeName === "character"){
+              allowWalkRight = false;
+            }
             this.pos.x = this.obstaclePos.x - (this.obstacleLength/2) - 0.25;
             this.characterPos.mtxLocal.translation = this.pos;
           }
         } else{
-          allowWalkLeft = true;
-          allowWalkRight = true;
+          if(nodeName === "character"){
+            allowWalkLeft = true;
+            allowWalkRight = true;
+          }
         }
     }
 

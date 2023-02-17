@@ -11,7 +11,9 @@ namespace Script {
       public static readonly iSubclass: number = fc.Component.registerSubclass(EnemyStateMachine);
       private static instructions: fcAid.StateMachineInstructions<JOB> = EnemyStateMachine.get();
 
-      //private enemyNode: fc.Node;
+      private enemy: fc.Node;
+
+      private enemySpeed: number = 0.05;
 
       //private directionRight: boolean;
   
@@ -41,67 +43,53 @@ namespace Script {
       }
   
       private static transitDefault(_machine: EnemyStateMachine): void {
-      //  console.log("Transit to", _machine.stateNext);
+       console.log("Transit to", _machine.stateNext);
       }
   
       private static async actDefault(_machine: EnemyStateMachine): Promise<void> {
-        //console.log(JOB[_machine.stateCurrent]);
+        _machine.transit(JOB.IDLE);
       }
   
       private static async actIdle(_machine: EnemyStateMachine): Promise<void> {
-        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
-        //console.log("idle");
-        if (distance.magnitude < 5)
+        let charPos: fc.Vector3 = characterSprite.mtxWorld.translation;
+        charPos.y -= 0.7;
+        let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(charPos, _machine.node.getParent().mtxWorld.translation);
+        distance.normalize();
+        let watchDirection: fc.Vector3 = _machine.node.mtxWorld.getX();
+        let angle: number = fc.Vector3.DOT(watchDirection, distance);
+        //console.log(angle);
+       
+        if (angle > -0.5 && angle < -0.48){
           _machine.transit(JOB.ATTACK);
+        }
       }
 
       private static async actSearch(_machine: EnemyStateMachine): Promise<void> {
-        //console.log("search")
+        //console.log("search");
         let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
         if (distance.magnitude < 10)
           _machine.transit(JOB.ATTACK);
+
       }
       
       private static async actAttack(_machine: EnemyStateMachine): Promise<void> {
-        //console.log("attack")
+
         let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
-        if (distance.magnitude > 5)
+        distance.normalize(1);
+        let distanceX = _machine.enemySpeed * Math.abs(distance.x);
+        _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX);
+
+
+        if (Math.abs(distance.x) > 2 || distance.x < 0)
           _machine.transit(JOB.IDLE);
       }
-  
-      // private static async actEscape(_machine: StateMachine): Promise<void> {
-      //   _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-      //   let difference: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(_machine.node.mtxWorld.translation, cart.mtxWorld.translation);
-      //   difference.normalize(_machine.forceEscape);
-      //   _machine.cmpBody.applyForce(difference);
-      //   StateMachine.actDefault(_machine);
-      // }
-      // private static async actDie(_machine: StateMachine): Promise<void> {
-      //   //
-      // }
-  
-      // private static transitDie(_machine: StateMachine): void {
-      //   _machine.cmpBody.applyLinearImpulse(ƒ.Vector3.Y(5));
-      //   let timer: ƒ.Timer = new ƒ.Timer(ƒ.Time.game, 100, 20, (_event: ƒ.EventTimer) => {
-      //     _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("black", 1 - _event.count / 20);
-      //     if (_event.lastCall)
-      //       _machine.transit(JOB.RESPAWN);
-      //   });
-      //   console.log(timer);
-      // }
-  
-      // private static actRespawn(_machine: StateMachine): void {
-      //   let range: ƒ.Vector3 = ƒ.Vector3.SCALE(mtxTerrain.scaling, 0.5);
-      //   _machine.cmpBody.setPosition(ƒ.Random.default.getVector3(range, ƒ.Vector3.SCALE(range, -1)));
-      //   _machine.transit(JOB.IDLE);
-      // }
   
       // Activate the functions of this component as response to events
       private hndEvent = (_event: Event): void => {
         switch (_event.type) {
           case fc.EVENT.COMPONENT_ADD:
             fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, this.update);
-            //this.enemyNode = this.node;
+            this.enemy = <EnemyNode>this.node;
             this.transit(JOB.IDLE);
             break;
           case fc.EVENT.COMPONENT_REMOVE:
@@ -111,17 +99,6 @@ namespace Script {
             break;
           case fc.EVENT.NODE_DESERIALIZED:
             this.transit(JOB.IDLE);
-            //this.directionRight= true;
-            // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
-            // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
-            //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
-            //   if (_event.cmpRigidbody.node.name == "Cart" && this.stateCurrent != JOB.DIE)
-            //     this.transit(JOB.ESCAPE);
-            // });
-            // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event: ƒ.EventPhysics) => {
-            //   if (this.stateCurrent == JOB.ESCAPE)
-            //     this.transit(JOB.IDLE);
-            // });
             break;
         }
       }
@@ -132,11 +109,10 @@ namespace Script {
       }
 
       private checkView = (): void =>{
-        //console.log(this.enemyNode.mtxWorld.getX());
-        //let PlayerDir: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
-        // console.log(PlayerDir);
-        // console.log(this.enemyNode.mtxWorld.translation);
-        //console.log(fc.Vector3.DOT(this.enemyNode.mtxWorld.getX(), ));
+        let raycast: fc.RayHitInfo = fc.Physics.raycast(this.enemy.mtxWorld.translation, this.enemy.mtxWorld.getX(), 10, true);
+        if(raycast.hit){
+          console.log(raycast.rigidbodyComponent.node.name);
+        }
       }
   
       // protected reduceMutator(_mutator: ƒ.Mutator): void {

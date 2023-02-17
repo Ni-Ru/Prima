@@ -93,11 +93,9 @@ var Script;
             let animationEnter = new ƒ.Animation("enterStairs", animStructureEnter, 30);
             let animationLeave = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
             if (enter) {
-                console.log("enter");
                 cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
             }
             else {
-                console.log("leave");
                 cmpAnimator = new ƒ.ComponentAnimator(animationLeave, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
             }
             this.node.addComponent(cmpAnimator);
@@ -237,7 +235,6 @@ var Script;
         interaction() {
             doorTransform = this.node.getComponent(fc.ComponentTransform);
             doorRigidBody = this.node.getComponent(fc.ComponentRigidbody);
-            console.log(this.openDoor);
             switch (this.openDoorVar) {
                 case true:
                     this.closeDoor();
@@ -260,11 +257,9 @@ var Script;
             openDoorImage.load("./imgs/openDoor.gif");
             closedDoorImage.load("./imgs/closedDoor.gif");
             if (closed) {
-                console.log("open");
                 openMaterial.coat = closedDoorCoat;
             }
             else {
-                console.log("close");
                 openMaterial.coat = openDoorCoat;
             }
             let cmpTextureNode = this.node.getChildrenByName("DoorTexture")[0];
@@ -292,15 +287,15 @@ var Script;
     var fc = FudgeCore;
     class EnemyNode extends fAid.NodeSprite {
         constructor() {
-            super("enemy");
+            super("EnemyNode");
             let EnemyImage = new fc.TextureImage();
             let enemyTransform = new fc.ComponentTransform();
             let Material = new fc.Material("enemyMat", fc.ShaderLitTextured);
             let enemyCoat = new fc.CoatTextured(undefined, EnemyImage);
-            let gravityCmp = new Script.GravityComponent();
             let stateMachine = new Script.EnemyStateMachine();
             this.addComponent(enemyTransform);
-            this.addComponent(gravityCmp);
+            this.addComponent(new Script.GravityComponent);
+            this.addComponent(new Script.InteractComponent);
             this.addComponent(stateMachine);
             EnemyImage.load("./imgs/enemySprite.gif");
             Material.coat = enemyCoat;
@@ -327,7 +322,8 @@ var Script;
     class EnemyStateMachine extends fcAid.ComponentStateMachine {
         static iSubclass = fc.Component.registerSubclass(EnemyStateMachine);
         static instructions = EnemyStateMachine.get();
-        //private enemyNode: fc.Node;
+        enemy;
+        enemySpeed = 0.05;
         //private directionRight: boolean;
         constructor() {
             super();
@@ -350,59 +346,43 @@ var Script;
             return setup;
         }
         static transitDefault(_machine) {
-            //  console.log("Transit to", _machine.stateNext);
+            console.log("Transit to", _machine.stateNext);
         }
         static async actDefault(_machine) {
-            //console.log(JOB[_machine.stateCurrent]);
+            _machine.transit(JOB.IDLE);
         }
         static async actIdle(_machine) {
-            let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
-            //console.log("idle");
-            if (distance.magnitude < 5)
+            let charPos = Script.characterSprite.mtxWorld.translation;
+            charPos.y -= 0.7;
+            let distance = fc.Vector3.DIFFERENCE(charPos, _machine.node.getParent().mtxWorld.translation);
+            distance.normalize();
+            let watchDirection = _machine.node.mtxWorld.getX();
+            let angle = fc.Vector3.DOT(watchDirection, distance);
+            //console.log(angle);
+            if (angle > -0.5 && angle < -0.48) {
                 _machine.transit(JOB.ATTACK);
+            }
         }
         static async actSearch(_machine) {
-            //console.log("search")
+            //console.log("search");
             let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.getParent().mtxWorld.translation, _machine.node.mtxWorld.translation);
             if (distance.magnitude < 10)
                 _machine.transit(JOB.ATTACK);
         }
         static async actAttack(_machine) {
-            //console.log("attack")
             let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
-            if (distance.magnitude > 5)
+            distance.normalize(1);
+            let distanceX = _machine.enemySpeed * Math.abs(distance.x);
+            _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX);
+            if (Math.abs(distance.x) > 2 || distance.x < 0)
                 _machine.transit(JOB.IDLE);
         }
-        // private static async actEscape(_machine: StateMachine): Promise<void> {
-        //   _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-        //   let difference: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(_machine.node.mtxWorld.translation, cart.mtxWorld.translation);
-        //   difference.normalize(_machine.forceEscape);
-        //   _machine.cmpBody.applyForce(difference);
-        //   StateMachine.actDefault(_machine);
-        // }
-        // private static async actDie(_machine: StateMachine): Promise<void> {
-        //   //
-        // }
-        // private static transitDie(_machine: StateMachine): void {
-        //   _machine.cmpBody.applyLinearImpulse(ƒ.Vector3.Y(5));
-        //   let timer: ƒ.Timer = new ƒ.Timer(ƒ.Time.game, 100, 20, (_event: ƒ.EventTimer) => {
-        //     _machine.cmpMaterial.clrPrimary = ƒ.Color.CSS("black", 1 - _event.count / 20);
-        //     if (_event.lastCall)
-        //       _machine.transit(JOB.RESPAWN);
-        //   });
-        //   console.log(timer);
-        // }
-        // private static actRespawn(_machine: StateMachine): void {
-        //   let range: ƒ.Vector3 = ƒ.Vector3.SCALE(mtxTerrain.scaling, 0.5);
-        //   _machine.cmpBody.setPosition(ƒ.Random.default.getVector3(range, ƒ.Vector3.SCALE(range, -1)));
-        //   _machine.transit(JOB.IDLE);
-        // }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* COMPONENT_ADD */:
                     fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
-                    //this.enemyNode = this.node;
+                    this.enemy = this.node;
                     this.transit(JOB.IDLE);
                     break;
                 case "componentRemove" /* COMPONENT_REMOVE */:
@@ -412,17 +392,6 @@ var Script;
                     break;
                 case "nodeDeserialized" /* NODE_DESERIALIZED */:
                     this.transit(JOB.IDLE);
-                    //this.directionRight= true;
-                    // let trigger: ƒ.ComponentRigidbody = this.node.getChildren()[0].getComponent(ƒ.ComponentRigidbody);
-                    // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, (_event: ƒ.EventPhysics) => {
-                    //   console.log("TriggerEnter", _event.cmpRigidbody.node.name);
-                    //   if (_event.cmpRigidbody.node.name == "Cart" && this.stateCurrent != JOB.DIE)
-                    //     this.transit(JOB.ESCAPE);
-                    // });
-                    // trigger.addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_EXIT, (_event: ƒ.EventPhysics) => {
-                    //   if (this.stateCurrent == JOB.ESCAPE)
-                    //     this.transit(JOB.IDLE);
-                    // });
                     break;
             }
         };
@@ -431,11 +400,10 @@ var Script;
             this.checkView();
         };
         checkView = () => {
-            //console.log(this.enemyNode.mtxWorld.getX());
-            //let PlayerDir: fc.Vector3 = fc.Vector3.DIFFERENCE(characterNode.mtxWorld.translation, this.enemyNode.mtxWorld.translation);
-            // console.log(PlayerDir);
-            // console.log(this.enemyNode.mtxWorld.translation);
-            //console.log(fc.Vector3.DOT(this.enemyNode.mtxWorld.getX(), ));
+            let raycast = fc.Physics.raycast(this.enemy.mtxWorld.translation, this.enemy.mtxWorld.getX(), 10, true);
+            if (raycast.hit) {
+                console.log(raycast.rigidbodyComponent.node.name);
+            }
         };
     }
     Script.EnemyStateMachine = EnemyStateMachine;
@@ -501,6 +469,7 @@ var Script;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* COMPONENT_ADD */:
+                    console.log("edit");
                     break;
                 case "componentRemove" /* COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* COMPONENT_ADD */, this.hndEvent);
@@ -508,6 +477,7 @@ var Script;
                     break;
                 case "nodeDeserialized" /* NODE_DESERIALIZED */:
                     this.characterPos = this.node.getParent();
+                    console.log(this.node);
                     // this.floors = branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
@@ -521,6 +491,7 @@ var Script;
             this.characterPos.mtxLocal.translateY(ySpeed, true);
         }
         checkCollission() {
+            this.characterPos = this.node.getParent();
             let floors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("floors")[0].getChildrenByName("floor_Pos");
             let walls = Script.branch.getChildrenByName("environment")[0].getChildrenByName("walls")[0].getChildrenByName("wall_Pos");
             let doors = Script.branch.getChildrenByName("environment")[0].getChildrenByName("doors")[0].getChildrenByName("door_Pos");
@@ -546,10 +517,10 @@ var Script;
                                 if (Math.abs(this.pos.x - this.obstaclePos.x) < 2) {
                                     switch (obstacle.name) {
                                         case "door_Pos":
-                                            interactCmp.update();
+                                            interactCmp.update(this);
                                             break;
                                         case "stair_Pos":
-                                            interactCmp.update();
+                                            interactCmp.update(this);
                                             break;
                                         default:
                                             this.wallCollission();
@@ -562,21 +533,28 @@ var Script;
             }
         }
         wallCollission() {
+            let nodeName = this.node.name;
             if (Math.abs(this.pos.x - this.obstaclePos.x) <= (this.obstacleLength / 2) + 0.25) {
                 if (this.pos.x > this.obstaclePos.x) {
-                    Script.allowWalkLeft = false;
+                    if (nodeName === "character") {
+                        Script.allowWalkLeft = false;
+                    }
                     this.pos.x = this.obstaclePos.x + (this.obstacleLength / 2) + 0.25;
                     this.characterPos.mtxLocal.translation = this.pos;
                 }
                 else {
-                    Script.allowWalkRight = false;
+                    if (nodeName === "character") {
+                        Script.allowWalkRight = false;
+                    }
                     this.pos.x = this.obstaclePos.x - (this.obstacleLength / 2) - 0.25;
                     this.characterPos.mtxLocal.translation = this.pos;
                 }
             }
             else {
-                Script.allowWalkLeft = true;
-                Script.allowWalkRight = true;
+                if (nodeName === "character") {
+                    Script.allowWalkLeft = true;
+                    Script.allowWalkRight = true;
+                }
             }
         }
         yCollission() {
@@ -627,10 +605,10 @@ var Script;
                     break;
             }
         };
-        update() {
+        update(entityGravityCmp) {
             DoorCmp = this.node.getComponent(Script.DoorComponent);
             StairCmp = this.node.getComponent(Script.StairComponent);
-            this.checkPlayerPos();
+            this.checkPlayerPos(entityGravityCmp);
         }
         actionControls() {
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.E])) {
@@ -656,23 +634,26 @@ var Script;
                 this.keyEPressed = false;
             }
         }
-        showInteract() {
-            this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+        showInteract(entityGravityCmp) {
+            let nodeName = entityGravityCmp.node.name;
+            if (nodeName === "character") {
+                this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+            }
             if (DoorCmp) {
                 if (!DoorCmp.getOpenDoorVar()) {
-                    Script.gravityCmp.wallCollission();
+                    entityGravityCmp.wallCollission();
                 }
             }
         }
         noInteract() {
             this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
         }
-        checkPlayerPos() {
-            let playerPos = Script.characterPos.mtxLocal.translation;
+        checkPlayerPos(entityGravityCmp) {
+            let playerPos = entityGravityCmp.node.getParent().mtxLocal.translation;
             let interactablePos = this.node.getParent().mtxLocal.translation;
             if (StairCmp) {
                 if (Math.abs(playerPos.x - interactablePos.x) < 0.3) {
-                    this.showInteract();
+                    this.showInteract(entityGravityCmp);
                     this.actionControls();
                 }
                 else {
@@ -681,7 +662,7 @@ var Script;
             }
             else {
                 if (Math.abs(playerPos.x - interactablePos.x) < 1) {
-                    this.showInteract();
+                    this.showInteract(entityGravityCmp);
                     this.actionControls();
                 }
                 else {
@@ -707,7 +688,6 @@ var Script;
     let walkingCoat;
     let attackingCoat;
     Script.walkSpeed = 3;
-    let deltaTime;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
     Script.allowInputs = true;
@@ -755,9 +735,12 @@ var Script;
         window.addEventListener("click", hndAttack);
     }
     function update(_event) {
-        deltaTime = fc.Loop.timeFrameGame / 1000;
-        Script.characterCmp.update(deltaTime);
-        Script.gravityCmp.update(deltaTime);
+        Script.deltaTime = fc.Loop.timeFrameGame / 1000;
+        Script.characterCmp.update(Script.deltaTime);
+        Script.gravityCmp.update(Script.deltaTime);
+        for (let enemy of enemyNodes) {
+            enemy.getChild(0).getComponent(Script.GravityComponent).update(Script.deltaTime);
+        }
         controls();
         fc.Physics.simulate(); // if physics is included and used
         viewport.draw();
@@ -794,7 +777,6 @@ var Script;
         Script.attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.characterSprite.mtxLocal.translateY(0.12);
         Script.characterSprite.mtxLocal.scaleX(1.3);
-        console.log(Script.walk);
         Script.currentAnimation = Script.idle;
         Script.characterSprite.setAnimation(Script.currentAnimation);
         Script.characterSprite.setFrameDirection(1);
@@ -949,8 +931,6 @@ var Script;
             this.addComponent(stoneTransform);
             let stoneRigid = new fc.ComponentRigidbody(10, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
-            let gravityCmp = new Script.GravityComponent();
-            this.addComponent(gravityCmp);
             let characterPosTrans = Script.characterPos.mtxWorld.translation;
             characterPosTrans.y += 0.5;
             let scaleVec = new fc.Vector3(0.2, 0.15, 0.5);

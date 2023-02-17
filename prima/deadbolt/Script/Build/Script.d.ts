@@ -58,6 +58,8 @@ declare namespace Script {
     export class EnemyStateMachine extends fcAid.ComponentStateMachine<JOB> {
         static readonly iSubclass: number;
         private static instructions;
+        private enemy;
+        private enemySpeed;
         constructor();
         static get(): fcAid.StateMachineInstructions<JOB>;
         private static transitDefault;
@@ -112,11 +114,11 @@ declare namespace Script {
         constructor();
         private keyEPressed;
         hndEvent: (_event: Event) => void;
-        update(): void;
+        update(entityGravityCmp: GravityComponent): void;
         actionControls(): void;
-        showInteract(): void;
+        showInteract(entityGravityCmp: GravityComponent): void;
         noInteract(): void;
-        checkPlayerPos(): void;
+        checkPlayerPos(entityGravityCmp: GravityComponent): void;
     }
 }
 declare namespace Script {
@@ -132,6 +134,7 @@ declare namespace Script {
     let attack: ƒAid.SpriteSheetAnimation;
     let gameState: GameState;
     const walkSpeed: number;
+    let deltaTime: number;
     let allowWalkRight: boolean;
     let allowWalkLeft: boolean;
     let allowInputs: boolean;

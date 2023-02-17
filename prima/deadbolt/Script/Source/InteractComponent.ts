@@ -5,7 +5,6 @@ namespace Script {
   let DoorCmp: DoorComponent;
   let StairCmp: StairComponent;
 
-
   export class InteractComponent extends fc.ComponentScript {
    
     public static readonly iSubclass: number = fc.Component.registerSubclass(InteractComponent);
@@ -41,10 +40,10 @@ namespace Script {
     }
 
 
-    update() {
+    update(entityGravityCmp: GravityComponent) {
       DoorCmp = this.node.getComponent(DoorComponent);
       StairCmp = this.node.getComponent(StairComponent);
-      this.checkPlayerPos();
+      this.checkPlayerPos(entityGravityCmp);
     }
 
     actionControls(){
@@ -72,11 +71,14 @@ namespace Script {
       }
     }
 
-    showInteract(){
-      this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+    showInteract(entityGravityCmp: GravityComponent){
+      let nodeName: string = entityGravityCmp.node.name;
+      if(nodeName === "character"){
+        this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 1;
+      }
       if(DoorCmp){
         if(!DoorCmp.getOpenDoorVar()){
-          gravityCmp.wallCollission();
+          entityGravityCmp.wallCollission();
         }
       }
     }
@@ -85,19 +87,19 @@ namespace Script {
       this.node.getComponent(fc.ComponentMaterial).clrPrimary.a = 0;
     }
 
-    checkPlayerPos(){
-      let playerPos: fc.Vector3 = characterPos.mtxLocal.translation;
+    checkPlayerPos(entityGravityCmp: GravityComponent){
+      let playerPos: fc.Vector3 = entityGravityCmp.node.getParent().mtxLocal.translation;
       let interactablePos: fc.Vector3 = this.node.getParent().mtxLocal.translation;
       if(StairCmp){
         if(Math.abs(playerPos.x - interactablePos.x) < 0.3){
-          this.showInteract();
+          this.showInteract(entityGravityCmp);
         this.actionControls();
         } else {
           this.noInteract();
         }
       }else{
         if(Math.abs(playerPos.x - interactablePos.x) < 1){
-          this.showInteract();
+          this.showInteract(entityGravityCmp);
           this.actionControls();
         } else {
           this.noInteract();

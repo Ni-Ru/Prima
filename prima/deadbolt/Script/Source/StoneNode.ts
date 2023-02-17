@@ -24,9 +24,6 @@ namespace Script {
             let stoneRigid: fc.ComponentRigidbody = new fc.ComponentRigidbody(10, fc.BODY_TYPE.DYNAMIC, fc.COLLIDER_TYPE.CUBE, fc.COLLISION_GROUP.DEFAULT);
             this.addComponent(stoneRigid);
 
-            let gravityCmp: GravityComponent = new GravityComponent();
-            this.addComponent(gravityCmp);
-
             let characterPosTrans = characterPos.mtxWorld.translation;
             characterPosTrans.y += 0.5;
 

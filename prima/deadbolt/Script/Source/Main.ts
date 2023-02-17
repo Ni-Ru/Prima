@@ -30,7 +30,7 @@ namespace Script {
   export let gameState: GameState;
 
   export const walkSpeed: number = 3;
-  let deltaTime: number;
+  export let deltaTime: number;
 
   export let allowWalkRight: boolean = true;
   export let allowWalkLeft: boolean = true;
@@ -96,8 +96,13 @@ namespace Script {
 
   function update(_event: Event): void {
     deltaTime = fc.Loop.timeFrameGame / 1000;
-    characterCmp.update(deltaTime)
-    gravityCmp.update(deltaTime)
+    characterCmp.update(deltaTime);
+    gravityCmp.update(deltaTime);
+
+    for(let enemy of enemyNodes){
+      enemy.getChild(0).getComponent(GravityComponent).update(deltaTime);
+    }
+
     controls();
     fc.Physics.simulate();  // if physics is included and used
     viewport.draw();
@@ -145,7 +150,6 @@ namespace Script {
     attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
     characterSprite.mtxLocal.translateY(0.12);
     characterSprite.mtxLocal.scaleX(1.3)
-    console.log(walk);
 
     currentAnimation = idle;
     characterSprite.setAnimation(currentAnimation);
