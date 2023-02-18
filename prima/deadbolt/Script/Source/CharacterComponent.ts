@@ -57,11 +57,12 @@ namespace Script {
     }
 
     update(deltaTime: number) {
-      this.node.getParent().mtxLocal.translateX(xSpeed * deltaTime, true)
       if(dead){
         if (characterSprite.getCurrentFrame == 3) {
           characterSprite.setFrameDirection(0);
-      }
+        }
+      }else{
+        this.node.getParent().mtxLocal.translateX(xSpeed * deltaTime, true)
       }
     }
 

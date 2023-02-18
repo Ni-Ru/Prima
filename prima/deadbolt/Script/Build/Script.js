@@ -39,11 +39,13 @@ var Script;
             }
         };
         update(deltaTime) {
-            this.node.getParent().mtxLocal.translateX(Script.xSpeed * deltaTime, true);
             if (Script.dead) {
                 if (Script.characterSprite.getCurrentFrame == 3) {
                     Script.characterSprite.setFrameDirection(0);
                 }
+            }
+            else {
+                this.node.getParent().mtxLocal.translateX(Script.xSpeed * deltaTime, true);
             }
         }
         walk(direction) {
