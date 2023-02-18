@@ -321,7 +321,7 @@ var Script;
         static iSubclass = fc.Component.registerSubclass(EnemyStateMachine);
         static instructions = EnemyStateMachine.get();
         enemy;
-        enemySpeed = 0.05;
+        enemySpeed = 3;
         //private directionRight: boolean;
         constructor() {
             super();
@@ -362,7 +362,7 @@ var Script;
             let distance = fc.Vector3.DIFFERENCE(Script.characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
             distance.normalize(1);
             let distanceX = _machine.enemySpeed * Math.abs(distance.x);
-            _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX);
+            _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX * Script.deltaTime);
             _machine.checkView();
         }
         // Activate the functions of this component as response to events

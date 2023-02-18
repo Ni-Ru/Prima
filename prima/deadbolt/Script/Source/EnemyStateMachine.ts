@@ -13,7 +13,7 @@ namespace Script {
 
       private enemy: fc.Node;
 
-      private enemySpeed: number = 0.05;
+      private enemySpeed: number = 3;
 
       //private directionRight: boolean;
   
@@ -67,7 +67,7 @@ namespace Script {
         let distance: fc.Vector3 = fc.Vector3.DIFFERENCE(characterSprite.mtxWorld.translation, _machine.node.mtxWorld.translation);
         distance.normalize(1);
         let distanceX = _machine.enemySpeed * Math.abs(distance.x);
-        _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX);
+        _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX * deltaTime);
 
 
         _machine.checkView();
