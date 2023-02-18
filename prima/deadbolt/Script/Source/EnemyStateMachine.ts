@@ -43,7 +43,7 @@ namespace Script {
       }
   
       private static transitDefault(_machine: EnemyStateMachine): void {
-       console.log("Transit to", _machine.stateNext);
+       //console.log("Transit to", _machine.stateNext);
       }
   
       private static async actDefault(_machine: EnemyStateMachine): Promise<void> {

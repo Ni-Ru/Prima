@@ -344,7 +344,7 @@ var Script;
             return setup;
         }
         static transitDefault(_machine) {
-            console.log("Transit to", _machine.stateNext);
+            //console.log("Transit to", _machine.stateNext);
         }
         static async actDefault(_machine) {
             _machine.transit(JOB.IDLE);
