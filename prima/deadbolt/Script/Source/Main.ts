@@ -130,6 +130,7 @@ namespace Script {
 
     let characterRigidBody: fc.ComponentRigidbody = new fc.ComponentRigidbody();
     characterRigidBody.typeBody = fc.BODY_TYPE.KINEMATIC;
+    characterRigidBody.collisionGroup = fc.COLLISION_GROUP.GROUP_5;
     characterRigidBody.mtxPivot.translateY(-0.2);
     characterSprite.addComponent(characterRigidBody);
     characterCmp = characterSprite.getComponent(CharacterComponent);

@@ -758,6 +758,7 @@ var Script;
         Script.characterSprite.addComponent(new Script.GravityComponent);
         let characterRigidBody = new fc.ComponentRigidbody();
         characterRigidBody.typeBody = fc.BODY_TYPE.KINEMATIC;
+        characterRigidBody.collisionGroup = fc.COLLISION_GROUP.GROUP_5;
         characterRigidBody.mtxPivot.translateY(-0.2);
         Script.characterSprite.addComponent(characterRigidBody);
         Script.characterCmp = Script.characterSprite.getComponent(Script.CharacterComponent);
