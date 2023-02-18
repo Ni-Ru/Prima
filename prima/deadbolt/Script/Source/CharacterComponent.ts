@@ -58,6 +58,11 @@ namespace Script {
 
     update(deltaTime: number) {
       this.node.getParent().mtxLocal.translateX(xSpeed * deltaTime, true)
+      if(dead){
+        if (characterSprite.getCurrentFrame == 3) {
+          characterSprite.setFrameDirection(0);
+      }
+      }
     }
 
     walk(direction: number) {
@@ -118,6 +123,7 @@ namespace Script {
       let animationLeave: ƒ.Animation = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
 
       if(enter){
+        console.log(cmpAnimator);
         cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
       }else{
         cmpAnimator = new ƒ.ComponentAnimator(animationLeave, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);

@@ -40,6 +40,11 @@ var Script;
         };
         update(deltaTime) {
             this.node.getParent().mtxLocal.translateX(Script.xSpeed * deltaTime, true);
+            if (Script.dead) {
+                if (Script.characterSprite.getCurrentFrame == 3) {
+                    Script.characterSprite.setFrameDirection(0);
+                }
+            }
         }
         walk(direction) {
             Script.xSpeed = Script.walkSpeed * direction;
@@ -92,6 +97,7 @@ var Script;
             let animationEnter = new ƒ.Animation("enterStairs", animStructureEnter, 30);
             let animationLeave = new ƒ.Animation("leaveStairs", animStructureLeave, 30);
             if (enter) {
+                console.log(cmpAnimator);
                 cmpAnimator = new ƒ.ComponentAnimator(animationEnter, ƒ.ANIMATION_PLAYMODE.PLAYONCE, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
             }
             else {
