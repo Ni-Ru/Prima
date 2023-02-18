@@ -17,14 +17,17 @@ namespace Script {
   let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
   let imgSpriteSheetWalk: ƒ.TextureImage = new ƒ.TextureImage();
   let imgSpriteSheetAttack: ƒ.TextureImage = new ƒ.TextureImage();
+  let imgSpriteSheetDeath: ƒ.TextureImage = new ƒ.TextureImage();
 
   let idleCoat: ƒ.CoatTextured;
   let walkingCoat: ƒ.CoatTextured;
   let attackingCoat: ƒ.CoatTextured;
+  let deathCoat: ƒ.CoatTextured;
 
   export let idle: ƒAid.SpriteSheetAnimation;
   export let walk: ƒAid.SpriteSheetAnimation;
   export let attack: ƒAid.SpriteSheetAnimation;
+  export let death: ƒAid.SpriteSheetAnimation;
 
 
   export let gameState: GameState;
@@ -144,6 +147,8 @@ namespace Script {
     walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
     await imgSpriteSheetAttack.load("./imgs/Attack.png");
     attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
+    await imgSpriteSheetDeath.load("./imgs/Dead.png");
+    deathCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetDeath);
 
     idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
     idle.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 5,65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
@@ -153,6 +158,9 @@ namespace Script {
 
     attack = new fcAid.SpriteSheetAnimation("Attack", attackingCoat);
     attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+
+    death = new fcAid.SpriteSheetAnimation("Death", deathCoat);
+    death.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
     characterSprite.mtxLocal.translateY(0.12);
     characterSprite.mtxLocal.scaleX(1.3)
 
@@ -179,7 +187,7 @@ namespace Script {
   }
 
   function controls(){
-    if(allowInputs){
+    if(allowInputs && !dead){
       if(fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])){
         if(allowWalkRight){
           characterCmp.setSprite(walk);
@@ -192,7 +200,11 @@ namespace Script {
         }
       }else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])){
         if(!attackingMotion){
-          characterCmp.setSprite(idle)
+          if(!dead){
+            characterCmp.setSprite(idle)
+          }else{
+            characterCmp.setSprite(death);
+          }
         }
         characterCmp.walk(0);
       }
@@ -209,18 +221,22 @@ namespace Script {
   }
 
   export function hndAttack(){
-    attackingMotion = true;
-    characterCmp.setSprite(attack);
-    setTimeout(() => {
-      attackingMotion = false;
-    }, 400);
+    if(!dead && allowInputs){
+      attackingMotion = true;
+      characterCmp.setSprite(attack);
+      setTimeout(() => {
+        attackingMotion = false;
+      }, 400);
+    }
   }
   
   function hndAim(e: MouseEvent): void{
-    if(weapon === "stones"){ 
-      if(e.button === 2){
-        document.body.style.cursor ="crosshair";
-        window.addEventListener("click", characterCmp.hndThrow);
+    if(!dead && allowInputs){
+      if(weapon === "stones"){ 
+        if(e.button === 2){
+          document.body.style.cursor ="crosshair";
+          window.addEventListener("click", characterCmp.hndThrow);
+        }
       }
     }
   }

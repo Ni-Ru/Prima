@@ -14,6 +14,8 @@ namespace Script {
   export let weapon: String = "knife";
 
   export let currentAnimation: ƒAid.SpriteSheetAnimation;
+  
+  export let dead: boolean = false;
 
   export class CharacterComponent extends fc.ComponentScript {
 
@@ -173,6 +175,11 @@ namespace Script {
         gameState.stoneAmount(gameState.stones, true);
       }
 
+    }
+
+    die(){
+      dead = true;
+      this.setSprite(death);
     }
 
     setSprite( sprite: fcAid.SpriteSheetAnimation){

@@ -8,6 +8,7 @@ var Script;
     let directionRight = true;
     Script.usedStairs = false;
     Script.weapon = "knife";
+    Script.dead = false;
     class CharacterComponent extends fc.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = fc.Component.registerSubclass(CharacterComponent);
@@ -144,6 +145,10 @@ var Script;
                 Script.gameState.stones -= 1;
                 Script.gameState.stoneAmount(Script.gameState.stones, true);
             }
+        }
+        die() {
+            Script.dead = true;
+            this.setSprite(Script.death);
         }
         setSprite(sprite) {
             if (Script.currentAnimation !== sprite) {
@@ -363,6 +368,9 @@ var Script;
             distance.normalize(1);
             let distanceX = _machine.enemySpeed * Math.abs(distance.x);
             _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX * Script.deltaTime);
+            if (distance.x < 0.8 && Math.abs(distance.y) < 0.75) {
+                Script.characterCmp.die();
+            }
             _machine.checkView();
         }
         // Activate the functions of this component as response to events
@@ -681,9 +689,11 @@ var Script;
     let imgSpriteSheet = new ƒ.TextureImage();
     let imgSpriteSheetWalk = new ƒ.TextureImage();
     let imgSpriteSheetAttack = new ƒ.TextureImage();
+    let imgSpriteSheetDeath = new ƒ.TextureImage();
     let idleCoat;
     let walkingCoat;
     let attackingCoat;
+    let deathCoat;
     Script.walkSpeed = 3;
     Script.allowWalkRight = true;
     Script.allowWalkLeft = true;
@@ -771,12 +781,16 @@ var Script;
         walkingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetWalk);
         await imgSpriteSheetAttack.load("./imgs/Attack.png");
         attackingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetAttack);
+        await imgSpriteSheetDeath.load("./imgs/Dead.png");
+        deathCoat = new ƒ.CoatTextured(undefined, imgSpriteSheetDeath);
         Script.idle = new fcAid.SpriteSheetAnimation("Idle", idleCoat);
         Script.idle.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 5, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.walk = new fcAid.SpriteSheetAnimation("Walk", walkingCoat);
         Script.walk.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 8, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.attack = new fcAid.SpriteSheetAnimation("Attack", attackingCoat);
         Script.attack.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
+        Script.death = new fcAid.SpriteSheetAnimation("Death", deathCoat);
+        Script.death.generateByGrid(ƒ.Rectangle.GET(0, 0, 96, 96), 4, 65, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(96));
         Script.characterSprite.mtxLocal.translateY(0.12);
         Script.characterSprite.mtxLocal.scaleX(1.3);
         Script.currentAnimation = Script.idle;
@@ -800,7 +814,7 @@ var Script;
         audioComp.play(true);
     }
     function controls() {
-        if (Script.allowInputs) {
+        if (Script.allowInputs && !Script.dead) {
             if (fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.D])) {
                 if (Script.allowWalkRight) {
                     Script.characterCmp.setSprite(Script.walk);
@@ -815,7 +829,12 @@ var Script;
             }
             else if (!fc.Keyboard.isPressedOne([fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.D])) {
                 if (!Script.attackingMotion) {
-                    Script.characterCmp.setSprite(Script.idle);
+                    if (!Script.dead) {
+                        Script.characterCmp.setSprite(Script.idle);
+                    }
+                    else {
+                        Script.characterCmp.setSprite(Script.death);
+                    }
                 }
                 Script.characterCmp.walk(0);
             }
@@ -831,18 +850,22 @@ var Script;
         }
     }
     function hndAttack() {
-        Script.attackingMotion = true;
-        Script.characterCmp.setSprite(Script.attack);
-        setTimeout(() => {
-            Script.attackingMotion = false;
-        }, 400);
+        if (!Script.dead && Script.allowInputs) {
+            Script.attackingMotion = true;
+            Script.characterCmp.setSprite(Script.attack);
+            setTimeout(() => {
+                Script.attackingMotion = false;
+            }, 400);
+        }
     }
     Script.hndAttack = hndAttack;
     function hndAim(e) {
-        if (Script.weapon === "stones") {
-            if (e.button === 2) {
-                document.body.style.cursor = "crosshair";
-                window.addEventListener("click", Script.characterCmp.hndThrow);
+        if (!Script.dead && Script.allowInputs) {
+            if (Script.weapon === "stones") {
+                if (e.button === 2) {
+                    document.body.style.cursor = "crosshair";
+                    window.addEventListener("click", Script.characterCmp.hndThrow);
+                }
             }
         }
     }

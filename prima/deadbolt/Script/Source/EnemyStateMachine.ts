@@ -68,6 +68,9 @@ namespace Script {
         distance.normalize(1);
         let distanceX = _machine.enemySpeed * Math.abs(distance.x);
         _machine.enemy.getParent().mtxLocal.translateX(-1 * distanceX * deltaTime);
+        if(distance.x < 0.8 && Math.abs(distance.y) < 0.75){
+          characterCmp.die();
+        }
 
 
         _machine.checkView();

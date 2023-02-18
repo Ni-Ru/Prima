@@ -5,6 +5,7 @@ declare namespace Script {
     let usedStairs: boolean;
     let weapon: String;
     let currentAnimation: ƒAid.SpriteSheetAnimation;
+    let dead: boolean;
     class CharacterComponent extends fc.ComponentScript {
         static readonly iSubclass: number;
         constructor();
@@ -16,6 +17,7 @@ declare namespace Script {
         useStairs(exit: number, stairInteract: InteractComponent): void;
         changeWeapon(): void;
         hndThrow(e: MouseEvent): void;
+        die(): void;
         setSprite(sprite: fcAid.SpriteSheetAnimation): void;
     }
 }
@@ -132,6 +134,7 @@ declare namespace Script {
     let idle: ƒAid.SpriteSheetAnimation;
     let walk: ƒAid.SpriteSheetAnimation;
     let attack: ƒAid.SpriteSheetAnimation;
+    let death: ƒAid.SpriteSheetAnimation;
     let gameState: GameState;
     const walkSpeed: number;
     let deltaTime: number;
